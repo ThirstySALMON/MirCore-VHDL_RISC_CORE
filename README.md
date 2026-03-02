@@ -1,2 +1,11 @@
-# MirCore-VHDL_RISC_CORE
-VHDL-based CPU architecture project implementing core RTL components including a parameterized ALU and register file, developed incrementally toward a custom processor design.
+# MirCore
+
+MirCore is an ongoing CPU architecture project implemented in VHDL.  
+The project incrementally develops fundamental processor components starting from basic execution units and evolving toward a complete custom processor.
+
+Current implemented modules include:
+- Parameterized Arithmetic Logic Unit (ALU)
+- Multi-register Register File
+- Simulation testbenches
+
+The goal of this project is to explore computer architecture concepts through practical RTL design, verification, and FPGA-oriented development.
