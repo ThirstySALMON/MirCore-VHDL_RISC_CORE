@@ -5,7 +5,5 @@ The project incrementally develops fundamental processor components starting fro
 
 Current implemented modules include:
 - Parameterized Arithmetic Logic Unit (ALU)
-- Multi-register Register File
-- Simulation testbenches
 
 The goal of this project is to explore computer architecture concepts through practical RTL design, verification, and FPGA-oriented development.
