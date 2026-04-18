@@ -1,0 +1,12 @@
+work/
+*.wdb
+*.qdb
+*.db
+*.o
+*.bak
+*.vcd
+*.log
+.vscode/
+.DS_Store
+__pycache__/
+*.pyc
