@@ -1,0 +1,201 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "imm_32bit[0]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[1]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[2]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[3]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[4]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[5]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[6]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[7]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[8]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[9]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[10]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[11]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[12]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[13]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[14]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[15]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[16]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[17]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[18]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[19]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[20]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[21]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[22]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[23]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[24]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[25]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[26]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[27]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[28]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[29]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[30]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_32bit[31]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[0]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[1]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[2]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[3]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[4]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[5]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[6]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[7]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[8]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[9]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[10]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[11]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[12]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[13]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[14]",
+					"strict" : false
+				},
+				{
+					"name" : "imm_16bit[15]",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

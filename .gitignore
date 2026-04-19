@@ -10,3 +10,6 @@ work/
 .DS_Store
 __pycache__/
 *.pyc
+*.bak
+transcript
+*.mpf
