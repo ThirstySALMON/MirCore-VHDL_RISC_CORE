@@ -13,3 +13,31 @@ __pycache__/
 *.bak
 transcript
 *.mpf
+*.mti
+# Quartus files (DON'T commit these!)
+*.qdb
+*.qws
+*.rtl
+*.rpt
+*.txt
+*.qpf
+*.qsf
+work/
+db/
+incremental_db/
+output_files/
+simulation/
+
+# ModelSim files
+*.wdb
+*.vcd
+*.o
+*.bak
+*.do.bak
+transcript
+
+# IDE
+.vscode/
+.DS_Store
+__pycache__/
+*.pyc
