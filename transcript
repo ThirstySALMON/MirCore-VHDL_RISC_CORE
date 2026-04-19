@@ -1,0 +1,166 @@
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 02:12:53 on Apr 19,2026
+# vcom -reportprogress 300 -2008 src/components/zero_extend.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Compiling entity zero_extend
+# -- Compiling architecture ze_rtl of zero_extend
+# End time: 02:12:53 on Apr 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 02:12:53 on Apr 19,2026
+# vcom -reportprogress 300 -2008 tb/zero_extend_tb.vhd 
+# ** Error: (vcom-7) Failed to open design unit file "tb/zero_extend_tb.vhd" in read mode.
+# No such file or directory. (errno = ENOENT)
+# End time: 02:12:53 on Apr 19,2026, Elapsed time: 0:00:00
+# Errors: 1, Warnings: 0
+# ** Error: C:/intelFPGA/20.1/modelsim_ase/win32aloem/vcom failed.
+# Error in macro C:\Users\User\Desktop\Semester 6\Computer Architecture\Project\Code\MirCore-VHDL_RISC_CORE\tb\do_files\test_zero_extend.do line 6
+# C:/intelFPGA/20.1/modelsim_ase/win32aloem/vcom failed.
+#     while executing
+# "vcom -2008 tb/zero_extend_tb.vhd"
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 02:13:37 on Apr 19,2026
+# vcom -reportprogress 300 -2008 src/components/zero_extend.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Compiling entity zero_extend
+# -- Compiling architecture ze_rtl of zero_extend
+# End time: 02:13:37 on Apr 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 02:13:37 on Apr 19,2026
+# vcom -reportprogress 300 -2008 tb/zero_extend_tb.vhd 
+# ** Error: (vcom-7) Failed to open design unit file "tb/zero_extend_tb.vhd" in read mode.
+# No such file or directory. (errno = ENOENT)
+# End time: 02:13:37 on Apr 19,2026, Elapsed time: 0:00:00
+# Errors: 1, Warnings: 0
+# ** Error: C:/intelFPGA/20.1/modelsim_ase/win32aloem/vcom failed.
+# Error in macro C:\Users\User\Desktop\Semester 6\Computer Architecture\Project\Code\MirCore-VHDL_RISC_CORE\tb\do_files\test_zero_extend.do line 6
+# C:/intelFPGA/20.1/modelsim_ase/win32aloem/vcom failed.
+#     while executing
+# "vcom -2008 tb/zero_extend_tb.vhd"
+exec ls -la tb/vlib work
+# couldn't execute "ls": no such file or directory
+vlib work
+# ** Warning: (vlib-34) Library already exists at "work".
+vcom -2008 src/components/zero_extend.vhd
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 02:13:55 on Apr 19,2026
+# vcom -reportprogress 300 -2008 src/components/zero_extend.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Compiling entity zero_extend
+# -- Compiling architecture ze_rtl of zero_extend
+# End time: 02:13:56 on Apr 19,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+vcom -2008 tb/zero_extend_tb.vhd
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 02:14:05 on Apr 19,2026
+# vcom -reportprogress 300 -2008 tb/zero_extend_tb.vhd 
+# ** Error: (vcom-7) Failed to open design unit file "tb/zero_extend_tb.vhd" in read mode.
+# No such file or directory. (errno = ENOENT)
+# End time: 02:14:05 on Apr 19,2026, Elapsed time: 0:00:00
+# Errors: 1, Warnings: 0
+# C:/intelFPGA/20.1/modelsim_ase/win32aloem/vcom failed.
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 02:15:05 on Apr 19,2026
+# vcom -reportprogress 300 -2008 src/components/zero_extend.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Compiling entity zero_extend
+# -- Compiling architecture ze_rtl of zero_extend
+# End time: 02:15:06 on Apr 19,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 02:15:06 on Apr 19,2026
+# vcom -reportprogress 300 -2008 tb/test_programs/zero_extend_tb.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_textio
+# -- Compiling entity zero_extend_tb
+# -- Compiling architecture behavioral of zero_extend_tb
+# End time: 02:15:06 on Apr 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim work.zero_extend_tb 
+# Start time: 02:15:06 on Apr 19,2026
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.std_logic_textio(body)
+# Loading work.zero_extend_tb(behavioral)
+# Loading work.zero_extend(ze_rtl)
+# ** Warning: (vsim-8684) No drivers exist on out port /zero_extend_tb/uut/imm_32bit(15 downto 0), and its initial value is not used.
+# Therefore, simulation behavior may occur that is not in compliance with
+# the VHDL standard as the initial values come from the base signal /zero_extend_tb/imm_32bit(15 downto 0).
+# ** Error: Test 1 FAILED: Expected 0x000000AB, got 0000XXXX
+#    Time: 10 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Note: Test 1 PASSED: 0x00AB extended to 0x000000AB
+#    Time: 10 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Error: Test 2 FAILED
+#    Time: 20 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Note: Test 2 PASSED: 0xABCD extended to 0x0000ABCD
+#    Time: 20 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Error: Test 3 FAILED
+#    Time: 30 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Note: Test 3 PASSED: 0x0000 extended to 0x00000000
+#    Time: 30 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Error: Test 4 FAILED
+#    Time: 40 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Note: Test 4 PASSED: 0xFFFF extended to 0x0000FFFF
+#    Time: 40 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Note: All zero_extend tests completed successfully!
+#    Time: 40 ns  Iteration: 0  Instance: /zero_extend_tb
+# Simulation completed. Check transcript for test results.
+# ** Warning: (vlib-34) Library already exists at "work".
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 02:16:44 on Apr 19,2026
+# vcom -reportprogress 300 -2008 src/components/zero_extend.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Compiling entity zero_extend
+# -- Compiling architecture ze_rtl of zero_extend
+# End time: 02:16:45 on Apr 19,2026, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim - Intel FPGA Edition vcom 2020.1 Compiler 2020.02 Feb 28 2020
+# Start time: 02:16:45 on Apr 19,2026
+# vcom -reportprogress 300 -2008 tb/test_programs/zero_extend_tb.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package std_logic_textio
+# -- Compiling entity zero_extend_tb
+# -- Compiling architecture behavioral of zero_extend_tb
+# End time: 02:16:45 on Apr 19,2026, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# WARNING: No extended dataflow license exists
+# End time: 02:16:52 on Apr 19,2026, Elapsed time: 0:01:46
+# Errors: 4, Warnings: 6
+# vsim work.zero_extend_tb 
+# Start time: 02:16:52 on Apr 19,2026
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.std_logic_textio(body)
+# Loading work.zero_extend_tb(behavioral)
+# Loading work.zero_extend(ze_rtl)
+# ** Note: Test 1 PASSED: 0x00AB extended to 0x000000AB
+#    Time: 10 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Note: Test 2 PASSED: 0xABCD extended to 0x0000ABCD
+#    Time: 20 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Note: Test 3 PASSED: 0x0000 extended to 0x00000000
+#    Time: 30 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Note: Test 4 PASSED: 0xFFFF extended to 0x0000FFFF
+#    Time: 40 ns  Iteration: 0  Instance: /zero_extend_tb
+# ** Note: All zero_extend tests completed successfully!
+#    Time: 40 ns  Iteration: 0  Instance: /zero_extend_tb
+# Simulation completed. Check transcript for test results.
