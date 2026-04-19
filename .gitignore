@@ -1,12 +1,40 @@
+# Quartus
+db/
+incremental_db/
+output_files/
+*.qws
+*.qdb
+*.rpt
+*.smsg
+*.summary
+*.jdi
+*.eda.rpt
+*.flow.rpt
+*.fit.rpt
+*.map.rpt
+*.sta.rpt
+*.asm.rpt
+*.pin
+*.sof
+*.done
+
+# ModelSim
 work/
 *.wdb
-*.qdb
-*.db
-*.o
-*.bak
 *.vcd
-*.log
+transcript
+*.cr.mti
+*.mpf
+simulation/
+*.vo
+
+# Other
+c5_pin_model_dump.txt
+arch-project_nativelink_simulation.rpt
+
+# IDE/OS
 .vscode/
 .DS_Store
 __pycache__/
 *.pyc
+Thumbs.db
