@@ -1,56 +1,33 @@
 # ============================================================================
-# ModelSim Compilation & Simulation Script (Auto-Compile All VHDL Files)
-# Place this file in: sim/run_sim.do
+# ModelSim Compilation Only Script
+# Compiles all VHDL files - no simulation
+# Place this in: sim/compile.do
 # ============================================================================
 
-# Navigate to project root (assuming run_sim.do is in sim/ directory)
-cd [file dirname [info script]]/..
+# Set working directory to project root
+set project_root [file dirname [info script]]/..
+cd $project_root
 
 echo "=========================================="
-echo "Starting Fresh Compilation..."
+echo "Compiling all VHDL files in src/..."
 echo "=========================================="
 
-# Delete old work library (IMPORTANT - prevents stale objects)
-if {[file exists build/work]} {
-    echo "Cleaning old build/work library..."
-    vdel -all -lib build/work
-}
-
-# Create build directory if it doesn't exist
-if {![file exists build]} {
-    file mkdir build
-}
-
-# Create fresh work library
-echo "Creating fresh work library..."
-vlib build/work
-vmap work build/work
-
-echo "=========================================="
-echo "Auto-Compiling All VHDL Files in src/..."
-echo "=========================================="
-
-# Get all .vhd files from src/ directory and compile them
-set vhdl_files [glob -nocomplain src/*.vhd]
+# Get all .vhd files from src/ directory
+set vhdl_files [glob -nocomplain -directory src *.vhd]
 
 if {[llength $vhdl_files] == 0} {
     echo "ERROR: No VHDL files found in src/ directory!"
-    echo "Make sure your VHDL files are in: project_root/src/"
     quit
 }
 
 foreach vhdl_file [lsort $vhdl_files] {
     echo "Compiling: $vhdl_file"
-    if {[catch {vcom -work work $vhdl_file} result]} {
-        echo "ERROR compiling $vhdl_file:"
-        echo $result
-    }
+    vcom $vhdl_file
 }
 
+echo ""
 echo "=========================================="
 echo "Compilation Complete!"
 echo "=========================================="
-
-# Find and load testbench (assumes testbench is the last compiled file or named testbench)
-# Automatically detects testbench entity (looks for entity with "testbench" in name)
-echo "Loading simulation environment..."
+echo ""
+echo "All files compiled successfully to work library"
