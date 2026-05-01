@@ -40,3 +40,7 @@ arch-project_nativelink_simulation.rpt
 __pycache__/
 *.pyc
 Thumbs.db
+
+*.qpf
+*.qsf
+transcript
