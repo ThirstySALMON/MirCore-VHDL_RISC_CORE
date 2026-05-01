@@ -40,42 +40,42 @@ BEGIN
     a <= X"00000000";
     WAIT FOR 1 ns;
     ASSERT result = X"00000001" REPORT "Failed: 0 + 1 should be 1" SEVERITY ERROR;
-    REPORT "✓ 0 + 1 = 1";
+    REPORT " 0 + 1 = 1";
     
     -- Test 2: Increment 1 to 2
     REPORT "Test 2: Increment 1 to 2";
     a <= X"00000001";
     WAIT FOR 1 ns;
     ASSERT result = X"00000002" REPORT "Failed: 1 + 1 should be 2" SEVERITY ERROR;
-    REPORT "✓ 1 + 1 = 2";
+    REPORT " 1 + 1 = 2";
     
     -- Test 3: Increment 255 to 256
     REPORT "Test 3: Increment 255 to 256";
     a <= X"000000FF";
     WAIT FOR 1 ns;
     ASSERT result = X"00000100" REPORT "Failed: 255 + 1 should be 256" SEVERITY ERROR;
-    REPORT "✓ 255 + 1 = 256";
+    REPORT " 255 + 1 = 256";
     
     -- Test 4: Increment large number
     REPORT "Test 4: Increment Large Number";
     a <= X"12345678";
     WAIT FOR 1 ns;
     ASSERT result = X"12345679" REPORT "Failed: Large number increment" SEVERITY ERROR;
-    REPORT "✓ 0x12345678 + 1 = 0x12345679";
+    REPORT "0x12345678 + 1 = 0x12345679";
     
     -- Test 5: Wrap around (max 32-bit value to 0)
     REPORT "Test 5: Wrap Around (0xFFFFFFFF + 1)";
     a <= X"FFFFFFFF";
     WAIT FOR 1 ns;
     ASSERT result = X"00000000" REPORT "Failed: Overflow wrap around" SEVERITY ERROR;
-    REPORT "✓ 0xFFFFFFFF + 1 = 0x00000000 (overflow)";
+    REPORT "0xFFFFFFFF + 1 = 0x00000000 (overflow)";
     
     -- Test 6: PC increment (typical fetch scenario)
     REPORT "Test 6: PC Increment Scenario";
     a <= X"00000010";
     WAIT FOR 1 ns;
     ASSERT result = X"00000011" REPORT "Failed: PC increment" SEVERITY ERROR;
-    REPORT "✓ PC: 0x10 + 1 = 0x11";
+    REPORT " PC: 0x10 + 1 = 0x11";
     
     REPORT "All tests passed!";
     WAIT;

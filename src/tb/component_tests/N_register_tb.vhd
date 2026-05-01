@@ -68,7 +68,7 @@ BEGIN
     d <= X"DEADBEEF";
     WAIT FOR CLK_PERIOD;
     ASSERT q = X"00000000" REPORT "Reset failed" SEVERITY ERROR;
-    REPORT "✓ Register cleared on reset";
+    REPORT " Register cleared on reset";
     WAIT FOR CLK_PERIOD;
     
     -- Test 2: Normal Load (Enable without Reset)
@@ -79,7 +79,7 @@ BEGIN
     d <= X"12345678";
     WAIT FOR CLK_PERIOD;
     ASSERT q = X"12345678" REPORT "Data not loaded" SEVERITY ERROR;
-    REPORT "✓ Data loaded successfully";
+    REPORT " Data loaded successfully";
     WAIT FOR CLK_PERIOD;
     
     -- Test 3: Load Different Data
@@ -87,7 +87,7 @@ BEGIN
     d <= X"ABCDEF00";
     WAIT FOR CLK_PERIOD;
     ASSERT q = X"ABCDEF00" REPORT "Data not updated" SEVERITY ERROR;
-    REPORT "✓ Data updated successfully";
+    REPORT "Data updated successfully";
     WAIT FOR CLK_PERIOD;
     
     -- Test 4: Hold Data (Enable = 0)
@@ -96,7 +96,7 @@ BEGIN
     d <= X"11111111";
     WAIT FOR CLK_PERIOD;
     ASSERT q = X"ABCDEF00" REPORT "Data should not change when en=0" SEVERITY ERROR;
-    REPORT "✓ Data held correctly";
+    REPORT " Data held correctly";
     WAIT FOR CLK_PERIOD;
     
     -- Test 5: Flush Signal
@@ -106,7 +106,7 @@ BEGIN
     d <= X"22222222";
     WAIT FOR CLK_PERIOD;
     ASSERT q = X"00000000" REPORT "Flush did not clear register" SEVERITY ERROR;
-    REPORT "✓ Register flushed successfully";
+    REPORT "Register flushed successfully";
     WAIT FOR CLK_PERIOD;
     
     -- Test 6: Flush has priority over Enable
@@ -116,7 +116,7 @@ BEGIN
     d <= X"33333333";
     WAIT FOR CLK_PERIOD;
     ASSERT q = X"00000000" REPORT "Flush should take priority over enable" SEVERITY ERROR;
-    REPORT "✓ Flush correctly prioritized";
+    REPORT "Flush correctly prioritized";
     WAIT FOR CLK_PERIOD;
     
     -- Test 7: Normal operation after flush
@@ -126,7 +126,7 @@ BEGIN
     d <= X"FEDCBA98";
     WAIT FOR CLK_PERIOD;
     ASSERT q = X"FEDCBA98" REPORT "Normal load failed after flush" SEVERITY ERROR;
-    REPORT "✓ Normal operation resumed";
+    REPORT "Normal operation resumed";
     WAIT FOR CLK_PERIOD;
     
     -- Test 8: Reset takes priority over everything
@@ -137,7 +137,7 @@ BEGIN
     d <= X"AAAAAAAA";
     WAIT FOR CLK_PERIOD;
     ASSERT q = X"00000000" REPORT "Reset should take priority" SEVERITY ERROR;
-    REPORT "✓ Async reset correctly prioritized";
+    REPORT "Async reset correctly prioritized";
     WAIT FOR CLK_PERIOD;
     
     -- Cleanup
