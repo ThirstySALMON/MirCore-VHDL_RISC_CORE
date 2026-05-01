@@ -11,7 +11,9 @@ ENTITY N_bit_register IS
     );
     PORT (
         clk : IN STD_LOGIC;  -- Clock signal
-        rst : IN STD_LOGIC;  -- Reset signal (active high)
+        rst : IN STD_LOGIC;  -- Reset signal (active high) (Async reset probably wont need to be used in a pipeline register, but just in case)
+        en  : IN STD_LOGIC;  -- Enable signal (active high)
+        flush : IN STD_LOGIC; -- Flush signal (active high, clears register on next clock)
         d   : IN STD_LOGIC_VECTOR(N-1 DOWNTO 0);  -- Data input
         q   : OUT STD_LOGIC_VECTOR(N-1 DOWNTO 0)   -- Data output
     );
@@ -27,7 +29,11 @@ BEGIN
         IF rst = '1' THEN
             reg_data <= (OTHERS => '0');  -- Reset register to 0
         ELSIF rising_edge(clk) THEN
+            IF flush = '1' THEN
+                reg_data <= (OTHERS => '0');  -- Clear register on flush
+            ELSIF en = '1' THEN
             reg_data <= d;  -- Load data on rising edge of clock
+            END IF;
         END IF;
     END PROCESS;
 
