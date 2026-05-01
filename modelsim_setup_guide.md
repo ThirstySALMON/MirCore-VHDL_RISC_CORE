@@ -40,6 +40,6 @@ All that it do is add the files in src directory (tb and everything) to the proj
 3. **When you run the Compile.do file , ModelSim will:**
    - Add the vhd files in the project folder to your modelsim project
    - Compile all VHDL files
-   - Load the testbench
+
 
 ---
