@@ -27,6 +27,8 @@ transcript
 *.mpf
 simulation/
 *.vo
+*.ini
+/build
 
 # Other
 c5_pin_model_dump.txt
