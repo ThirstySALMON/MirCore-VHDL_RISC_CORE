@@ -36,8 +36,6 @@
 -- NOTE:
 -- This is NOT an unsigned ALU, so C does NOT represent a real carry-out.
 --------------------------------------------------------------------------------
-
-
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
@@ -66,6 +64,11 @@ BEGIN
         -- convert inputs to signed
         a := signed(operand1);
         b := signed(operand2);
+
+        -- to prevent latches
+        z := '0';
+        n := '0';
+        c := '0';
 
         -- select operation
         CASE alu_op IS
