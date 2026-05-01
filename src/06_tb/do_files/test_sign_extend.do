@@ -1,8 +1,8 @@
 # Test Sign Extend Module
 
 vlib work
-vcom -2008 src/components/sign_extend.vhd
-vcom -2008 tb/test_programs/sign_extend_tb.vhd
+vcom -2008 src/01_components/sign_extend.vhd
+vcom -2008 src/06_tb/component_tests/sign_extend_tb.vhd
 vsim work.sign_extend_tb
 run -all
 # Print results
