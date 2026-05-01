@@ -31,8 +31,8 @@ BEGIN
         imm_16bit <= x"00AB";
         WAIT FOR 10 ns;
         ASSERT imm_32bit = x"000000AB"
-        REPORT "Test 1 FAILED: Expected 0x000000AB, got " &
-            to_hstring(imm_32bit)
+        REPORT "Test 1 FAILED: Expected 0x000000AB, got " 
+            
             SEVERITY error;
         REPORT "Test 1 PASSED: 0x00AB sign-extended to 0x000000AB (positive)";
 
@@ -40,8 +40,8 @@ BEGIN
         imm_16bit <= x"FF5B";
         WAIT FOR 10 ns;
         ASSERT imm_32bit = x"FFFFFF5B"
-        REPORT "Test 2 FAILED: Expected 0xFFFFFF5B, got " &
-            to_hstring(imm_32bit)
+        REPORT "Test 2 FAILED: Expected 0xFFFFFF5B, got " 
+       
             SEVERITY error;
         REPORT "Test 2 PASSED: 0xFF5B sign-extended to 0xFFFFFF5B (negative)";
 
@@ -57,8 +57,8 @@ BEGIN
         imm_16bit <= x"FFFF";
         WAIT FOR 10 ns;
         ASSERT imm_32bit = x"FFFFFFFF"
-        REPORT "Test 4 FAILED: Expected 0xFFFFFFFF, got " &
-            to_hstring(imm_32bit)
+        REPORT "Test 4 FAILED: Expected 0xFFFFFFFF, got " 
+           
             SEVERITY error;
         REPORT "Test 4 PASSED: 0xFFFF sign-extended to 0xFFFFFFFF (-1)";
 

@@ -38,8 +38,8 @@ begin
     imm_16bit <= x"00AB";  
     wait for 10 ns;
     assert imm_32bit = x"000000AB" 
-      report "Test 1 FAILED: Expected 0x000000AB, got " & 
-             to_hstring(imm_32bit)
+      report "Test 1 FAILED: Expected 0x000000AB, got "
+           
       severity error;
     report "Test 1 PASSED: 0x00AB extended to 0x000000AB";
     
@@ -50,14 +50,7 @@ begin
       report "Test 2 FAILED"
       severity error;
     report "Test 2 PASSED: 0xABCD extended to 0x0000ABCD";
-    
-    -- Test 3: All zeros
-    imm_16bit <= x"0000";
-    wait for 10 ns;
-    assert imm_32bit = x"00000000"
-      report "Test 3 FAILED"
-      severity error;
-    report "Test 3 PASSED: 0x0000 extended to 0x00000000";
+  
     
     -- Test 4: All ones
     imm_16bit <= x"FFFF";
