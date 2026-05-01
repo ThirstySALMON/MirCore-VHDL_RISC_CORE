@@ -28,7 +28,7 @@ transcript
 simulation/
 *.vo
 *.ini
-/build
+*.wlf
 
 # Other
 c5_pin_model_dump.txt
