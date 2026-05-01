@@ -54,22 +54,3 @@ echo "=========================================="
 # Find and load testbench (assumes testbench is the last compiled file or named testbench)
 # Automatically detects testbench entity (looks for entity with "testbench" in name)
 echo "Loading simulation environment..."
-
-# Try to launch the simulation
-# If you have multiple testbenches, specify which one to use:
-# Change "testbench" to your actual testbench entity name if different
-
-if {[catch {vsim -work work testbench} result]} {
-    echo "WARNING: Could not auto-load testbench 'testbench'"
-    echo "Compiled entities available. Please specify testbench manually."
-    echo "Example: vsim -work work your_testbench_name"
-} else {
-    echo "=========================================="
-    echo "Simulation Ready!"
-    echo "=========================================="
-    echo "Type 'run -all' in the ModelSim console to execute"
-    
-    # Optional: Load waveform configuration if you have one
-    # Uncomment the line below after you create sim/waveform.do
-    # do sim/waveform.do
-}
