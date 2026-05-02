@@ -151,26 +151,6 @@ architecture behavior of IDEX1_tb is
 
     constant CLK_PERIOD : time := 10 ns;
 
-    -- --------------------------------------------------------
-    -- Procedure: assert all outputs match expected (or all zero)
-    -- pass mode='Z' => check all outputs are zero (flush/init)
-    -- pass mode='V' => check all outputs equal the test pattern
-    -- --------------------------------------------------------
-    procedure check_all_zero(label : string;
-                             signal pc_o   : in std_logic_vector(9 downto 0);
-                             signal rsrc1_o: in std_logic_vector(31 downto 0);
-                             signal alu_op_o : in std_logic_vector(2 downto 0);
-                             signal reg_WE_o : in std_logic;
-                             signal HLT_o    : in std_logic) is
-    begin
-        if pc_o = "0000000000" and rsrc1_o = x"00000000"
-           and alu_op_o = "000" and reg_WE_o = '0' and HLT_o = '0' then
-            report "[PASS] " & label & " - all outputs cleared";
-        else
-            report "[FAIL] " & label & " - outputs not all zero" severity error;
-        end if;
-    end procedure;
-
 begin
 
     uut: IDEX1
@@ -249,12 +229,12 @@ begin
 
     stim_proc : process
 
-        -- Helper: drive a representative pattern onto every input
+        -- Helper: drive pattern A onto every input
         procedure drive_pattern_A is
         begin
             predicted_T  <= '1';
-            HW_INT_ret   <= "0000000010";    -- 2
-            pc           <= "0000000100";    -- 4
+            HW_INT_ret   <= "0000000010";
+            pc           <= "0000000100";
             rsrc1        <= x"DEADBEEF";
             rsrc2        <= x"12345678";
             imm          <= x"ABCD";
@@ -325,7 +305,12 @@ begin
         -- -------------------------------------------------------
         report "=== TEST 1: Initial state ===";
         wait for 1 ns;
-        check_all_zero("Initial", pc_out, rsrc1_out, alu_op_out, reg_WE_out, HLT_out);
+        assert pc_out      = "0000000000" report "FAIL initial pc"     severity error;
+        assert rsrc1_out   = x"00000000"  report "FAIL initial rsrc1"  severity error;
+        assert alu_op_out  = "000"        report "FAIL initial alu_op" severity error;
+        assert reg_WE_out  = '0'          report "FAIL initial reg_WE" severity error;
+        assert HLT_out     = '0'          report "FAIL initial HLT"    severity error;
+        report "[PASS] Initial state - all outputs zero";
 
         -- -------------------------------------------------------
         -- TEST 2: write_en = 0, register holds at zero
@@ -335,7 +320,11 @@ begin
         drive_pattern_A;
         wait until rising_edge(clk);
         wait for 1 ns;
-        check_all_zero("write_en=0", pc_out, rsrc1_out, alu_op_out, reg_WE_out, HLT_out);
+        assert pc_out     = "0000000000" report "FAIL pc not held"     severity error;
+        assert rsrc1_out  = x"00000000"  report "FAIL rsrc1 not held"  severity error;
+        assert alu_op_out = "000"        report "FAIL alu_op not held" severity error;
+        assert HLT_out    = '0'          report "FAIL HLT not held"    severity error;
+        report "[PASS] write_en=0 - outputs stay at zero";
 
         -- -------------------------------------------------------
         -- TEST 3: write_en = 1 latches pattern A
@@ -379,17 +368,16 @@ begin
 
         -- -------------------------------------------------------
         -- TEST 4: write_en = 0 holds pattern A
-        -- New inputs must not appear at outputs
         -- -------------------------------------------------------
         report "=== TEST 4: Outputs hold when write_en=0 ===";
         write_en <= '0';
         drive_pattern_B;
         wait until rising_edge(clk);
         wait for 1 ns;
-        assert pc_out      = "0000000100" report "FAIL pc held"    severity error;
-        assert rsrc1_out   = x"DEADBEEF"  report "FAIL rsrc1 held" severity error;
+        assert pc_out      = "0000000100" report "FAIL pc held"     severity error;
+        assert rsrc1_out   = x"DEADBEEF"  report "FAIL rsrc1 held"  severity error;
         assert alu_op_out  = "101"        report "FAIL alu_op held" severity error;
-        assert HLT_out     = '1'          report "FAIL HLT held"   severity error;
+        assert HLT_out     = '1'          report "FAIL HLT held"    severity error;
         report "[PASS] Outputs hold pattern A while write_en=0";
 
         -- -------------------------------------------------------
@@ -401,31 +389,37 @@ begin
         wait until rising_edge(clk);
         wait for 1 ns;
         flush <= '0';
-        check_all_zero("Flushed", pc_out, rsrc1_out, alu_op_out, reg_WE_out, HLT_out);
-        assert reg_WE_out = '0' report "FAIL reg_WE not cleared" severity error;
-        assert mem_WE_out = '0' report "FAIL mem_WE not cleared" severity error;
-        assert HLT_out    = '0' report "FAIL HLT not cleared"    severity error;
+        assert pc_out     = "0000000000" report "FAIL flushed pc"     severity error;
+        assert rsrc1_out  = x"00000000"  report "FAIL flushed rsrc1"  severity error;
+        assert alu_op_out = "000"        report "FAIL flushed alu_op" severity error;
+        assert reg_WE_out = '0'          report "FAIL flushed reg_WE" severity error;
+        assert mem_WE_out = '0'          report "FAIL flushed mem_WE" severity error;
+        assert HLT_out    = '0'          report "FAIL flushed HLT"    severity error;
+        report "[PASS] Flush cleared all outputs";
 
         -- -------------------------------------------------------
         -- TEST 6: Flush priority over write_en
         -- -------------------------------------------------------
         report "=== TEST 6: Flush beats write_en ===";
-        -- First load valid pattern
         write_en <= '1';
         drive_pattern_A;
         wait until rising_edge(clk);
         wait for 1 ns;
 
-        -- Now assert both flush and write_en
         flush    <= '1';
         write_en <= '1';
-        drive_pattern_B;          -- these inputs should be ignored
+        drive_pattern_B;
         wait until rising_edge(clk);
         wait for 1 ns;
         flush    <= '0';
         write_en <= '0';
 
-        check_all_zero("Flush wins", pc_out, rsrc1_out, alu_op_out, reg_WE_out, HLT_out);
+        assert pc_out     = "0000000000" report "FAIL flush>wr pc"     severity error;
+        assert rsrc1_out  = x"00000000"  report "FAIL flush>wr rsrc1"  severity error;
+        assert alu_op_out = "000"        report "FAIL flush>wr alu_op" severity error;
+        assert reg_WE_out = '0'          report "FAIL flush>wr reg_WE" severity error;
+        assert HLT_out    = '0'          report "FAIL flush>wr HLT"    severity error;
+        report "[PASS] Flush wins over write_en";
 
         -- -------------------------------------------------------
         -- TEST 7: Latch pattern B after flush
