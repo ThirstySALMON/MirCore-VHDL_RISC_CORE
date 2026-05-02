@@ -26,7 +26,7 @@ architecture rtl of IFID is
     signal predicted_T_str : std_logic := '0';
     signal inst_str : std_logic_vector(31 downto 0) := (others => '0');
     signal input_port_str : std_logic_vector(31 downto 0) := (others => '0');
-    signal pc_str : std_logic_vector(9 downto 0);
+    signal pc_str : std_logic_vector(9 downto 0) := (others => '0');
 
 
 begin
