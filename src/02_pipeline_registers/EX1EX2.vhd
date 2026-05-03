@@ -39,6 +39,7 @@ entity EX1EX2 is
         is_load      : in std_logic;
         swap_state   : in std_logic_vector(1 downto 0);
         out_enable   : in std_logic;
+        HLT          : in std_logic;
 
         -- Data signals Outputs
         predicted_T_out  : out std_logic;
@@ -51,6 +52,7 @@ entity EX1EX2 is
         imm_out          : out std_logic_vector(15 downto 0);
         reg_dst_addr_out : out std_logic_vector(2 downto 0);
         input_port_out   : out std_logic_vector(31 downto 0);
+     
 
         -- Control signals Outputs
         alu_op_out       : out std_logic_vector(2 downto 0);
@@ -71,6 +73,7 @@ entity EX1EX2 is
         is_load_out      : out std_logic;
         swap_state_out   : out std_logic_vector(1 downto 0);
         out_enable_out   : out std_logic
+        HLT_out          : out std_logic;
     );
 end entity;
 
@@ -107,6 +110,7 @@ architecture rtl of EX1EX2 is
     signal is_load_str      : std_logic := '0';
     signal swap_state_str   : std_logic_vector(1 downto 0) := (others => '0');
     signal out_enable_str   : std_logic := '0';
+    signal hlt_str   : std_logic := '0';
 
 begin
 
@@ -145,6 +149,7 @@ begin
                 is_load_str      <= '0';
                 swap_state_str   <= (others => '0');
                 out_enable_str   <= '0';
+                hlt_str          <= '0';
 
             elsif write_en = '1' then
                 -- Latch all data signals
@@ -178,6 +183,7 @@ begin
                 is_load_str      <= is_load;
                 swap_state_str   <= swap_state;
                 out_enable_str   <= out_enable;
+                hlt_str          <= HLT
             end if;
         end if;
     end process;
@@ -212,5 +218,6 @@ begin
     is_load_out      <= is_load_str;
     swap_state_out   <= swap_state_str;
     out_enable_out   <= out_enable_str;
+    HLT_out          <= hlt_str
 
 end rtl;
