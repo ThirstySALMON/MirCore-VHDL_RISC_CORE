@@ -29,6 +29,7 @@ ENTITY control_unit IS
 
         is_load : OUT STD_LOGIC;
         swap_state : OUT STD_LOGIC_VECTOR(1 DOWNTO 0);
+        swap_reg_enable : OUT STD_LOGIC;
 
         hlt : OUT STD_LOGIC;
         out_enable : OUT STD_LOGIC
@@ -65,6 +66,7 @@ BEGIN
 
         is_load <= '0';
         swap_state <= "00";
+        swap_reg_enable <= '0';
 
         hlt <= '0';
         out_enable <= '0';
@@ -119,8 +121,9 @@ BEGIN
             WHEN "01000" =>
                 alu_op <= "111";
                 reg_data <= "101";
-                reg_we <= '1';
+                reg_we <= '1'; 
                 swap_state <= "01";
+                swap_reg_enable <= '1';
 
                 -- ADD
             WHEN "01001" =>
