@@ -6,7 +6,7 @@
 # ============================================================
 # 🔧 CHANGE ONLY THIS LINE 👇
 # ============================================================
-set target_do_file "src/06_tb/do_files/test_conditional_jump_decoder.do"
+set target_do_file "src/06_tb/do_files/test_predictor_2_bit.do"
 
 # ============================================================
 # Run selected .do file
