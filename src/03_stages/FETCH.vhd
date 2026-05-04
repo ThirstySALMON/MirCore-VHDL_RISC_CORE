@@ -74,7 +74,7 @@ begin
     process(clk, rst)
     begin
         if rst = '1' then
-            pc_reg <= (others => '0');
+            pc_reg <= instruction_word(9 downto 0);  -- M[0] holds reset vector (e.g. 4)
         elsif rising_edge(clk) then
             if pc_write_en = '1' then
                 pc_reg <= pc_in;
