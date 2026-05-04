@@ -72,8 +72,8 @@ entity EX1EX2 is
         INT_state_out    : out std_logic_vector(1 downto 0);
         is_load_out      : out std_logic;
         swap_state_out   : out std_logic_vector(1 downto 0);
-        out_enable_out   : out std_logic
-        HLT_out          : out std_logic;
+        out_enable_out   : out std_logic;
+        HLT_out          : out std_logic
     );
 end entity;
 
@@ -183,7 +183,7 @@ begin
                 is_load_str      <= is_load;
                 swap_state_str   <= swap_state;
                 out_enable_str   <= out_enable;
-                hlt_str          <= HLT
+                hlt_str          <= HLT;
             end if;
         end if;
     end process;
@@ -218,6 +218,6 @@ begin
     is_load_out      <= is_load_str;
     swap_state_out   <= swap_state_str;
     out_enable_out   <= out_enable_str;
-    HLT_out          <= hlt_str
+    HLT_out          <= hlt_str;
 
 end rtl;
