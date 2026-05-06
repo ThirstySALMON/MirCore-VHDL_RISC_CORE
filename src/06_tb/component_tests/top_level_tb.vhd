@@ -7,54 +7,27 @@ end top_level_tb;
 
 architecture behavior of top_level_tb is
 
-    -- Mirror top_level's wiring so the internal fetch->IFID instruction bus
-    -- (inst_out_fetch) is observable from the testbench. The DUTs below are
-    -- the exact same components top_level instantiates, wired the same way.
-
-    component memory is
+    component top_level is
         port (
-            clk          : in  std_logic;
-            mem_write_en : in  std_logic;
-            mem_addr     : in  std_logic_vector(9 downto 0);
-            mem_data_in  : in  std_logic_vector(31 downto 0);
-            mem_data_out : out std_logic_vector(31 downto 0)
+            clk                : in  std_logic;
+            rst                : in  std_logic;
+            interupt           : in  std_logic;
+            input_port         : in  std_logic_vector(31 downto 0);
+            output_port        : out std_logic_vector(31 downto 0);
+            core_enable        : out std_logic;
+            dbg_inst_out_fetch : out std_logic_vector(31 downto 0);
+            dbg_pc_current     : out std_logic_vector(9 downto 0)
         );
     end component;
 
-    component fetch_stage is
-        port (
-            clk                      : in  std_logic;
-            rst                      : in  std_logic;
-            predicted_taken          : out std_logic;
-            pc_current               : out std_logic_vector(9 downto 0);
-            input_port_passthrough   : out std_logic_vector(31 downto 0);
-            inst_to_ifid             : out std_logic_vector(31 downto 0);
-            inst_mem_addr            : out std_logic_vector(9 downto 0);
-            branch_prediction_result : in  std_logic_vector(1 downto 0);
-            pc_write_en              : in  std_logic;
-            pc_src_sel               : in  std_logic_vector(1 downto 0);
-            corrected_addr_sel       : in  std_logic;
-            branch_target_addr       : in  std_logic_vector(9 downto 0);
-            branch_fallthrough_addr  : in  std_logic_vector(9 downto 0);
-            instruction_word         : in  std_logic_vector(31 downto 0);
-            mem_read_addr            : in  std_logic_vector(31 downto 0);
-            input_port               : in  std_logic_vector(31 downto 0)
-        );
-    end component;
-
-    -- Top-level inputs
-    signal clk         : std_logic := '0';
-    signal rst         : std_logic := '0';
-    signal input_port  : std_logic_vector(31 downto 0) := (others => '0');
-
-    -- Internal buses (mirror of top_level)
-    signal memory_data_out    : std_logic_vector(31 downto 0);
-    signal memory_addr        : std_logic_vector(9 downto 0);
-    signal predict            : std_logic;
-    signal pc_crr             : std_logic_vector(9 downto 0);
-    signal input_out_fetch    : std_logic_vector(31 downto 0);
-    signal inst_out_fetch     : std_logic_vector(31 downto 0);
-    signal mem_addr_out_fetch : std_logic_vector(9 downto 0);
+    signal clk                : std_logic := '0';
+    signal rst                : std_logic := '0';
+    signal interupt           : std_logic := '0';
+    signal input_port         : std_logic_vector(31 downto 0) := (others => '0');
+    signal output_port        : std_logic_vector(31 downto 0);
+    signal core_enable        : std_logic;
+    signal dbg_inst_out_fetch : std_logic_vector(31 downto 0);
+    signal dbg_pc_current     : std_logic_vector(9 downto 0);
 
     constant CLK_PERIOD : time := 10 ns;
 
@@ -97,36 +70,16 @@ architecture behavior of top_level_tb is
 
 begin
 
-    -- Memory: async read at memory_addr
-    memory_addr <= mem_addr_out_fetch;
-    u_memory : memory
+    uut : top_level
         port map (
-            clk          => clk,
-            mem_write_en => '0',
-            mem_addr     => memory_addr,
-            mem_data_in  => (others => '0'),
-            mem_data_out => memory_data_out
-        );
-
-    -- Fetch stage: same wiring as top_level
-    u_fetch_stage : fetch_stage
-        port map (
-            clk                      => clk,
-            rst                      => rst,
-            predicted_taken          => predict,
-            pc_current               => pc_crr,
-            input_port_passthrough   => input_out_fetch,
-            inst_to_ifid             => inst_out_fetch,
-            inst_mem_addr            => mem_addr_out_fetch,
-            branch_prediction_result => (others => '0'),
-            pc_write_en              => '1',
-            pc_src_sel               => (others => '0'),
-            corrected_addr_sel       => '0',
-            branch_target_addr       => (others => '0'),
-            branch_fallthrough_addr  => (others => '0'),
-            instruction_word         => memory_data_out,
-            mem_read_addr            => (others => '0'),
-            input_port               => input_port
+            clk                => clk,
+            rst                => rst,
+            interupt           => interupt,
+            input_port         => input_port,
+            output_port        => output_port,
+            core_enable        => core_enable,
+            dbg_inst_out_fetch => dbg_inst_out_fetch,
+            dbg_pc_current     => dbg_pc_current
         );
 
     clk_process : process
@@ -140,9 +93,9 @@ begin
         report "=== TOP-LEVEL FETCH PATH TEST ===";
         report "Verifying program.mem contents propagate to inst_out_fetch.";
 
-        -- Reset pulse. The fetch stage's reset path loads
-        -- pc_reg <= instruction_word(9 downto 0), which on the first cycle is
-        -- M[0](9:0) = 0x004 = 4. So after reset is released, the PC starts at 4.
+        -- Reset pulse. fetch_stage's reset path loads pc_reg <= instruction_word(9:0),
+        -- which on the first cycle is M[0](9:0) = 0x004 = 4.
+        -- After reset is released, the PC starts at 4.
         rst <= '1';
         wait for CLK_PERIOD;
         rst <= '0';
@@ -150,10 +103,9 @@ begin
         -- Settle one delta so async memory read reflects the new PC=4.
         wait for 1 ns;
 
-        -- After reset deasserted, PC = 4. Walk through addresses 4..13 and
-        -- confirm inst_out_fetch matches program.mem on each cycle.
+        -- Walk through addresses 4..13 and confirm inst_out_fetch matches program.mem.
         for i in 4 to 13 loop
-            check_inst(i, inst_out_fetch, EXPECTED_PROG(i));
+            check_inst(i, dbg_inst_out_fetch, EXPECTED_PROG(i));
             wait until rising_edge(clk);
             wait for 1 ns;
         end loop;

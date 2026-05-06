@@ -12,7 +12,11 @@ entity top_level is
 
     -- outputs
     output_port : out std_logic_vector(31 downto 0);
-    core_enable : out std_logic
+    core_enable : out std_logic;
+
+    -- TEMP debug outputs (for testbench observation; remove once pipeline is wired up)
+    dbg_inst_out_fetch : out std_logic_vector(31 downto 0);
+    dbg_pc_current     : out std_logic_vector(9 downto 0)
   );
 end entity;
 
@@ -125,6 +129,10 @@ begin
         input_port               => input_port
     );
 
+
+    -- TEMP debug taps
+    dbg_inst_out_fetch <= inst_out_fetch;
+    dbg_pc_current     <= pc_crr;
 
     u_IFID : IFID
     port map(
