@@ -13,7 +13,7 @@ entity top_level is
   port (
     clk         : in  std_logic;
     rst         : in  std_logic;
-    interupt   : in  std_logic;
+    interrupt   : in  std_logic;
     input_port  : in  std_logic_vector(31 downto 0);
 
     -- TEMP testbench-driven flush for IF/ID and ID/EX1.
