@@ -63,7 +63,7 @@ begin
 
     --------------------PC Inputs--------------------------------
     -- TODO PC input mux
-    pc_in <= pc_plus1;   -- 
+    pc_in <= pc_plus1;   --  also add reset
     --------------------PC Logic----------------------------------
     --  PC + 1 adder (combinational) 
     pc_plus1 <= std_logic_vector(unsigned(pc_reg) + 1);

@@ -98,7 +98,7 @@ begin
 
 
 
-  memory_addr <= mem_addr_out_fetch; -- to be changed for selection between fetch and mem/wb
+  memory_addr <= (others => '0') when rst = '1' else mem_addr_out_fetch; -- to be changed for selection between fetch and mem/wb
     u_memory : memory
     port map (
         clk          => clk,
