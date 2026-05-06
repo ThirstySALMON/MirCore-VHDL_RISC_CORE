@@ -17,8 +17,9 @@ architecture behavior of top_level_tb is
         port (
             clk         : in  std_logic;
             rst         : in  std_logic;
-            interupt    : in  std_logic;
+            interrupt   : in  std_logic;
             input_port  : in  std_logic_vector(31 downto 0);
+            tb_flush    : in  std_logic;   -- TEMP: remove once hazard unit is integrated
             output_port : out std_logic_vector(31 downto 0);
             core_enable : out std_logic
         );
@@ -26,8 +27,9 @@ architecture behavior of top_level_tb is
 
     signal clk         : std_logic := '0';
     signal rst         : std_logic := '0';
-    signal interupt    : std_logic := '0';
+    signal interrupt   : std_logic := '0';
     signal input_port  : std_logic_vector(31 downto 0) := (others => '0');
+    signal tb_flush    : std_logic := '0';   -- TEMP: remove once hazard unit is integrated
     signal output_port : std_logic_vector(31 downto 0);
     signal core_enable : std_logic;
 
@@ -39,8 +41,9 @@ begin
         port map (
             clk         => clk,
             rst         => rst,
-            interupt    => interupt,
+            interrupt   => interrupt,
             input_port  => input_port,
+            tb_flush    => tb_flush,
             output_port => output_port,
             core_enable => core_enable
         );
@@ -53,12 +56,27 @@ begin
 
     stim_proc : process
     begin
-        -- Pulse reset, then run free for many cycles so the pipeline fills.
+        -- Pulse reset, then run free so the pipeline fills.
         rst <= '1';
+        tb_flush <= '1';
         wait until rising_edge(clk);
         rst <= '0';
+        tb_flush <= '0';
 
-        for i in 0 to 31 loop
+        -- Let the pipeline fill for a few cycles.
+        for i in 0 to 7 loop
+            wait until rising_edge(clk);
+        end loop;
+
+        -- TEMP flush stimulus: pulse tb_flush for one clock so IF/ID and ID/EX1
+        -- both clear to NOPs. Remove this block once the hazard unit drives
+        -- flush internally.
+        tb_flush <= '1';
+        wait until rising_edge(clk);
+        tb_flush <= '0';
+
+        -- Continue running so the post-flush behavior is visible in waves.
+        for i in 0 to 23 loop
             wait until rising_edge(clk);
         end loop;
 

@@ -13,8 +13,12 @@ entity top_level is
   port (
     clk         : in  std_logic;
     rst         : in  std_logic;
-    interrupt    : in  std_logic;
+    interupt   : in  std_logic;
     input_port  : in  std_logic_vector(31 downto 0);
+
+    -- TEMP testbench-driven flush for IF/ID and ID/EX1.
+    -- TODO remove once the hazard unit is integrated and drives flush internally.
+    tb_flush    : in  std_logic;
 
     output_port : out std_logic_vector(31 downto 0);
     core_enable : out std_logic
@@ -358,7 +362,7 @@ begin
   u_IFID : IFID
     port map (
       clk             => clk,
-      flush           => '0',                   -- TODO from hazard
+      flush           => tb_flush,              -- TEMP from TB; TODO from hazard
       write_en        => '1',                   -- TODO from hazard
       predicted_T     => predict_fetch,
       inst            => inst_fetch,
@@ -447,7 +451,7 @@ begin
   u_IDEX1 : IDEX1
     port map (
       clk          => clk,
-      flush        => '0',                  -- TODO from hazard
+      flush        => tb_flush,             -- TEMP from TB; TODO from hazard
       write_en     => '0',                  -- TODO from hazard
 
       -- Data inputs
