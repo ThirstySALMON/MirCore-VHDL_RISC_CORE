@@ -1,0 +1,180 @@
+================================================================================
+TOP_LEVEL DEBUG SIGNALS - REFERENCE
+================================================================================
+This file lists every dbg_* port currently exposed on top_level for testbench
+observation. Each entry has:
+  - port name (as declared in src/05_top/top_level.vhd entity)
+  - width
+  - internal source signal (the architecture signal it taps)
+  - purpose / what it observes
+
+These ports are TEMPORARY scaffolding. Remove them once each pipeline stage is
+wired up and the corresponding stage outputs are observable through normal
+program behaviour (output_port, core_enable, etc.).
+
+================================================================================
+FETCH STAGE
+================================================================================
+dbg_inst_out_fetch    std_logic_vector(31 downto 0)
+  Source : inst_out_fetch
+  Purpose: instruction word emitted by fetch_stage to IF/ID register.
+           Used by top_level_tb to verify program.mem contents reach the
+           fetch->IFID bus on each cycle (PC walk test).
+
+dbg_pc_current        std_logic_vector(9  downto 0)
+  Source : pc_crr
+  Purpose: current PC value emitted by fetch_stage. Mirrors pc_reg one
+           combinational delta delayed by the output assignment.
+           Useful for sanity-checking sequential PC increment + reset vector.
+
+================================================================================
+ID/EX1 PIPELINE REGISTER (post-latch outputs, feed EX1 stage)
+================================================================================
+-- Data signals --
+
+dbg_idex1_predicted_t   std_logic
+  Source : predicted_t_from_IDEX1
+  Purpose: branch-predictor "taken" hint, latched and forwarded to EX1.
+
+dbg_idex1_hw_int_ret    std_logic_vector(9  downto 0)
+  Source : hw_int_ret_from_IDEX1
+  Purpose: HW interrupt return address (10-bit code-mem PC), latched.
+
+dbg_idex1_pc            std_logic_vector(9  downto 0)
+  Source : pc_from_IDEX1
+  Purpose: PC of the instruction currently in EX1 stage (one cycle behind IF/ID).
+
+dbg_idex1_rsrc1         std_logic_vector(31 downto 0)
+  Source : rsrc1_from_IDEX1
+  Purpose: source-register-1 data read by decode, latched for EX1 ALU input.
+
+dbg_idex1_rsrc2         std_logic_vector(31 downto 0)
+  Source : rsrc2_from_IDEX1
+  Purpose: source-register-2 data, latched.
+
+dbg_idex1_imm           std_logic_vector(15 downto 0)
+  Source : imm_from_IDEX1
+  Purpose: immediate field extracted from instruction (inst[15:0]), latched.
+
+dbg_idex1_reg_dst_addr  std_logic_vector(2  downto 0)
+  Source : reg_dst_addr_from_IDEX1
+  Purpose: write-back register address (Rdst, possibly swapped via SWAP unit).
+
+dbg_idex1_rsrc1_addr    std_logic_vector(2  downto 0)
+  Source : rsrc1_addr_from_IDEX1
+  Purpose: register address used for Rsrc1 read (post swap-mux). For forwarding.
+
+dbg_idex1_rsrc2_addr    std_logic_vector(2  downto 0)
+  Source : rsrc2_addr_from_IDEX1
+  Purpose: register address used for Rsrc2 read. For forwarding.
+
+dbg_idex1_input_port    std_logic_vector(31 downto 0)
+  Source : input_port_from_IDEX1
+  Purpose: external input_port value passthrough, latched (for IN instruction).
+
+-- Control signals --
+
+dbg_idex1_alu_src       std_logic
+  Source : alu_src_from_IDEX1
+  Purpose: ALU operand-B mux select (0=rsrc2, 1=imm). Set by IADD etc.
+
+dbg_idex1_alu_op        std_logic_vector(2 downto 0)
+  Source : alu_op_from_IDEX1
+  Purpose: ALU operation code.
+           000=NOP/zero, 001=NOT, 010=INC, 100=ADD, 101=SUB, 110=AND, 111=PASS.
+
+dbg_idex1_ccr_sel       std_logic_vector(2 downto 0)
+  Source : ccr_sel_from_IDEX1
+  Purpose: CCR (flags register) update-source select.
+           000=hold, 100=Z+N only, 111=Z+N+C+V, plus interrupt/RTI specials.
+
+dbg_idex1_modify_ccr    std_logic_vector(2 downto 0)
+  Source : modify_ccr_from_IDEX1
+  Purpose: branch-condition CCR field probe (drives JZ/JN/JC condition decoder).
+           Note: decode_stage names this signal "modify_fl" -- same semantics.
+
+dbg_idex1_branch_op     std_logic_vector(3 downto 0)
+  Source : branch_op_from_IDEX1
+  Purpose: branch/jump operation code.
+           0000=none, 0001=JZ, 0010=JN, 0011=JC, 0100=JMP,
+           0101=CALL, 0110=RET, 0111=INT, 1000=RTI.
+
+dbg_idex1_new_sp_sel    std_logic
+  Source : new_sp_sel_from_IDEX1
+  Purpose: SP-update mux select (0=SP+1 / pop, 1=SP-1 / push).
+
+dbg_idex1_sp_we         std_logic
+  Source : sp_we_from_IDEX1
+  Purpose: stack-pointer write-enable (asserted by PUSH/POP/CALL/RET/INT/RTI).
+
+dbg_idex1_add_sel       std_logic
+  Source : add_sel_from_IDEX1
+  Purpose: STD effective-address-adder enable. 1 = add immediate to base reg.
+
+dbg_idex1_mem_addr_sel  std_logic_vector(2 downto 0)
+  Source : mem_addr_sel_from_IDEX1
+  Purpose: data-memory address-source mux.
+           001=LDD/STD (Rsrc1+imm), 010=push slot, 011=pop slot, 000=idle.
+
+dbg_idex1_mem_data_sel  std_logic_vector(1 downto 0)
+  Source : mem_data_sel_from_IDEX1
+  Purpose: data-memory write-data mux.
+           00=idle, 01=Rsrc (PUSH/STD), 10=PC+flags (CALL/INT).
+
+dbg_idex1_mem_we        std_logic
+  Source : mem_we_from_IDEX1
+  Purpose: data-memory write-enable, latched.
+
+dbg_idex1_mem_r         std_logic
+  Source : mem_r_from_IDEX1
+  Purpose: data-memory read-enable, latched.
+
+dbg_idex1_reg_data      std_logic_vector(2 downto 0)
+  Source : reg_data_from_IDEX1
+  Purpose: register-file write-data mux select.
+           001=mem, 010=imm, 011=ALU, 100=input_port, 101=Rsrc1 passthrough.
+
+dbg_idex1_reg_we        std_logic
+  Source : reg_we_from_IDEX1
+  Purpose: register-file write-enable, latched.
+
+dbg_idex1_ret           std_logic
+  Source : ret_from_IDEX1
+  Purpose: RET/RTI flag -- tells branch unit to use mem_data as PC source.
+
+dbg_idex1_int_state     std_logic_vector(1 downto 0)
+  Source : int_state_from_IDEX1
+  Purpose: interrupt FSM state passed to EX1 (00=normal, 01=INT enter, 11=RTI).
+
+dbg_idex1_is_load       std_logic
+  Source : is_load_from_IDEX1
+  Purpose: load-use hazard hint (LDM/LDD). Used by hazard unit for stalling.
+
+dbg_idex1_swap_state    std_logic_vector(1 downto 0)
+  Source : swap_state_from_IDEX1
+  Purpose: SWAP-instruction FSM state (00=idle, 01=phase1).
+
+dbg_idex1_out_enable    std_logic
+  Source : out_enable_from_IDEX1
+  Purpose: OUT instruction flag -- drives top-level output_port write.
+
+dbg_idex1_hlt           std_logic
+  Source : hlt_from_IDEX1
+  Purpose: HLT flag -- gates core_enable / clock-enable downstream.
+
+================================================================================
+SIGNAL NAMING CONVENTIONS USED IN TOP_LEVEL
+================================================================================
+*_to_IDEX1     : combinational outputs of decode_stage, feeding IDEX1 inputs.
+*_from_IDEX1   : registered outputs of IDEX1, feeding the EX1 stage.
+dbg_*          : top-level entity-port debug taps, for testbench observation.
+
+================================================================================
+NOTES
+================================================================================
+- decode_stage's "modify_fl" port maps to IDEX1's "modify_ccr" port (same
+  signal, two different historical names). The to/from naming follows whichever
+  side it sits on in top_level (modify_fl_to_IDEX1, modify_ccr_from_IDEX1).
+- All dbg_* taps are pure passthrough wires (concurrent assignments). They have
+  no synthesis cost beyond extra IO if synthesised; remove them for the final
+  build.
