@@ -14,7 +14,8 @@ START:
     ;LDM R2, 10
 
     ; R3 = R1 + R2
-    ADD R3, R1, R2
+    STD R1, 5(R2)
+    LDD R2, 20(R3)
 
     IADD R4 ,R5 , 10
      

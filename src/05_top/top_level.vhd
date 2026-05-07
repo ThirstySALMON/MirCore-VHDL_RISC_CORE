@@ -423,6 +423,158 @@ architecture rtl of top_level is
       out_enable_out   : out std_logic;
       HLT_out          : out std_logic
     ); end component;
+
+  component EX2 is
+    port (
+      clk : in std_logic;
+      rst : in std_logic;
+
+      -- Control signals from EX1/EX2
+      HLT_in_ex1_ex2                      : in  std_logic;
+      HLT_out_ex2_mem                     : out std_logic;
+
+      out_enable_in_ex1_ex2               : in  std_logic;
+      out_enable_out_ex2_mem              : out std_logic;
+
+      swap_state_in_ex1_ex2               : in  std_logic_vector(1 downto 0);
+      swap_state_out_hazard_fwd_ex2_mem   : out std_logic_vector(1 downto 0);
+
+      is_load_in_ex1_ex2                  : in  std_logic;
+      is_load_out_hazard_ex2_mem          : out std_logic;
+
+      INT_state_in_ex1_ex2                : in  std_logic_vector(1 downto 0);
+      INT_state_out_hazard_bccr_ex2_mem   : out std_logic_vector(1 downto 0);
+
+      ret_in_ex1_ex2                      : in  std_logic;
+      ret_out_hazard_ex2_mem              : out std_logic;
+
+      reg_WE_in_ex1_ex2                   : in  std_logic;
+      reg_WE_out_fwd_ex2_mem              : out std_logic;
+
+      reg_data_in_ex1_ex2                 : in  std_logic_vector(2 downto 0);
+      reg_data_out_ex2_mem                : out std_logic_vector(2 downto 0);
+
+      mem_R_in_ex1_ex2                    : in  std_logic;
+      mem_R_out_hazard_ex2_mem            : out std_logic;
+
+      mem_WE_in_ex1_ex2                   : in  std_logic;
+      mem_WE_out_ex2_mem                  : out std_logic;
+
+      mem_data_sel_in_ex1_ex2             : in  std_logic_vector(1 downto 0);
+      mem_data_sel_out_ex2_mem            : out std_logic_vector(1 downto 0);
+
+      mem_addr_sel_in_ex1_ex2             : in  std_logic_vector(2 downto 0);
+      mem_addr_sel_out_ex2_mem            : out std_logic_vector(2 downto 0);
+
+      add_sel_in_ex1_ex2                  : in  std_logic;
+
+      SP_WE_in_ex1_ex2                    : in  std_logic;
+      SP_WE_out_ex2_mem                   : out std_logic;
+
+      newSP_sel_in_ex1_ex2                : in  std_logic;
+      newSP_sel_out_ex2_mem               : out std_logic;
+
+      branch_op_in_ex1_ex2                : in  std_logic_vector(3 downto 0);
+      modify_fl_in_ex1_ex2                : in  std_logic_vector(2 downto 0);
+      ccr_sel_in_ex1_ex2                  : in  std_logic_vector(2 downto 0);
+
+      alu_op_in_ex1_ex2                   : in  std_logic_vector(2 downto 0);
+      alu_op_out_fwd_ex2_mem              : out std_logic_vector(2 downto 0);
+
+      pc_in_ex1_ex2                       : in  std_logic_vector(9 downto 0);
+      pc_out_branch_ex2_mem               : out std_logic_vector(9 downto 0);
+
+      HW_INT_ret_in_ex1_ex2               : in  std_logic_vector(9 downto 0);
+      HW_INT_ret_out_ex2_mem              : out std_logic_vector(9 downto 0);
+
+      -- Data signals
+      ccr_in_ex1_ex2                      : in  std_logic_vector(2 downto 0);
+
+      alu_result_in_ex1_ex2               : in  std_logic_vector(31 downto 0);
+      alu_result_out_ex2_mem              : out std_logic_vector(31 downto 0);
+
+      rsrc1_in_ex1_ex2                    : in  std_logic_vector(31 downto 0);
+      rsrc1_out_ex2_mem                   : out std_logic_vector(31 downto 0);
+
+      rsrc2_in_ex1_ex2                    : in  std_logic_vector(31 downto 0);
+
+      imm_in_ex1_ex2                      : in  std_logic_vector(15 downto 0);
+      imm_out_ex2_mem                     : out std_logic_vector(15 downto 0);
+
+      reg_dst_addr_in_ex1_ex2             : in  std_logic_vector(2 downto 0);
+      reg_dst_addr_out_hazard_fwd_ex2_mem : out std_logic_vector(2 downto 0);
+
+      input_port_in_ex1_ex2               : in  std_logic_vector(31 downto 0);
+      input_port_out_ex2_mem              : out std_logic_vector(31 downto 0);
+
+      -- EX2-generated outputs
+      add_result_out_ex2_mem              : out std_logic_vector(9 downto 0);
+      branch_decision_out_hazard          : out std_logic
+    );
+  end component;
+
+  component EX2MEM is
+    port (
+      clk      : in  std_logic;
+      flush    : in  std_logic;
+      write_en : in  std_logic;
+
+      -- Data inputs
+      pc           : in  std_logic_vector(9 downto 0);
+      HW_INT_ret   : in  std_logic_vector(9 downto 0);
+      alu_res      : in  std_logic_vector(31 downto 0);
+      add_result   : in  std_logic_vector(9 downto 0);
+      rsrc1        : in  std_logic_vector(31 downto 0);
+      imm          : in  std_logic_vector(15 downto 0);
+      reg_dst_addr : in  std_logic_vector(2 downto 0);
+      input_port   : in  std_logic_vector(31 downto 0);
+
+      -- Control inputs
+      alu_op       : in  std_logic_vector(2 downto 0);
+      newSP_sel    : in  std_logic;
+      SP_WE        : in  std_logic;
+      mem_addr_sel : in  std_logic_vector(2 downto 0);
+      mem_data_sel : in  std_logic_vector(1 downto 0);
+      mem_WE       : in  std_logic;
+      mem_R        : in  std_logic;
+      reg_data     : in  std_logic_vector(2 downto 0);
+      reg_WE       : in  std_logic;
+      ret          : in  std_logic;
+      INT_state    : in  std_logic_vector(1 downto 0);
+      is_load      : in  std_logic;
+      swap_state   : in  std_logic_vector(1 downto 0);
+      out_enable   : in  std_logic;
+      HLT          : in  std_logic;
+
+      -- Data outputs
+      pc_out           : out std_logic_vector(9 downto 0);
+      HW_INT_ret_out   : out std_logic_vector(9 downto 0);
+      alu_res_out      : out std_logic_vector(31 downto 0);
+      add_result_out   : out std_logic_vector(9 downto 0);
+      rsrc1_out        : out std_logic_vector(31 downto 0);
+      imm_out          : out std_logic_vector(15 downto 0);
+      reg_dst_addr_out : out std_logic_vector(2 downto 0);
+      input_port_out   : out std_logic_vector(31 downto 0);
+
+      -- Control outputs
+      alu_op_out       : out std_logic_vector(2 downto 0);
+      newSP_sel_out    : out std_logic;
+      SP_WE_out        : out std_logic;
+      mem_addr_sel_out : out std_logic_vector(2 downto 0);
+      mem_data_sel_out : out std_logic_vector(1 downto 0);
+      mem_WE_out       : out std_logic;
+      mem_R_out        : out std_logic;
+      reg_data_out     : out std_logic_vector(2 downto 0);
+      reg_WE_out       : out std_logic;
+      ret_out          : out std_logic;
+      INT_state_out    : out std_logic_vector(1 downto 0);
+      is_load_out      : out std_logic;
+      swap_state_out   : out std_logic_vector(1 downto 0);
+      out_enable_out   : out std_logic;
+      HLT_out          : out std_logic
+    );
+  end component;
+
     ------------------------------------------------------------------------------
     -- Internal signals
     ------------------------------------------------------------------------------
@@ -588,6 +740,63 @@ architecture rtl of top_level is
     signal swap_state_from_EX1EX2   : std_logic_vector(1 downto 0);
     signal out_enable_from_EX1EX2   : std_logic;
     signal hlt_from_EX1EX2          : std_logic;
+
+    -- EX2 -> EX2/MEM (data + control passthroughs)
+    -- alu_result_from_EX2 also feeds EX1's forwarding muxes (ex2_mem slot).
+    signal hlt_from_EX2             : std_logic;
+    signal out_enable_from_EX2      : std_logic;
+    signal swap_state_from_EX2      : std_logic_vector(1 downto 0);  -- + Hazard, Forwarding
+    signal is_load_from_EX2         : std_logic;                      -- + Hazard
+    signal int_state_from_EX2       : std_logic_vector(1 downto 0);  -- + Hazard, BCCR
+    signal ret_from_EX2             : std_logic;                      -- + Hazard
+    signal reg_we_from_EX2          : std_logic;                      -- + Forwarding
+    signal reg_data_from_EX2        : std_logic_vector(2 downto 0);
+    signal mem_r_from_EX2           : std_logic;                      -- + Hazard
+    signal mem_we_from_EX2          : std_logic;
+    signal mem_data_sel_from_EX2   : std_logic_vector(1 downto 0);
+    signal mem_addr_sel_from_EX2   : std_logic_vector(2 downto 0);
+    signal sp_we_from_EX2           : std_logic;
+    signal new_sp_sel_from_EX2      : std_logic;
+    signal alu_op_from_EX2          : std_logic_vector(2 downto 0);  -- + Forwarding
+    signal pc_from_EX2              : std_logic_vector(9 downto 0);   -- branch correction fan-out
+    signal hw_int_ret_from_EX2      : std_logic_vector(9 downto 0);
+    signal alu_result_from_EX2      : std_logic_vector(31 downto 0); -- + EX1 fwd muxes
+    signal rsrc1_from_EX2           : std_logic_vector(31 downto 0);
+    signal imm_from_EX2             : std_logic_vector(15 downto 0);
+    signal reg_dst_addr_from_EX2    : std_logic_vector(2 downto 0);  -- + Hazard, Forwarding
+    signal input_port_from_EX2      : std_logic_vector(31 downto 0);
+
+    -- EX2-generated (no _in_ counterpart)
+    signal add_result_from_EX2      : std_logic_vector(9 downto 0);   -- mem effective addr
+    signal branch_decision_from_EX2 : std_logic;                       -- to Hazard Unit only
+
+    -- EX2/MEM -> MEM (data)
+    -- alu_res_from_EX2MEM and imm_from_EX2MEM also feed EX1's forwarding muxes (ex2_mem slot).
+    signal pc_from_EX2MEM            : std_logic_vector(9 downto 0);
+    signal hw_int_ret_from_EX2MEM    : std_logic_vector(9 downto 0);
+    signal alu_res_from_EX2MEM       : std_logic_vector(31 downto 0);
+    signal add_result_from_EX2MEM    : std_logic_vector(9 downto 0);
+    signal rsrc1_from_EX2MEM         : std_logic_vector(31 downto 0);
+    signal imm_from_EX2MEM           : std_logic_vector(15 downto 0);
+    signal reg_dst_addr_from_EX2MEM  : std_logic_vector(2 downto 0);
+    signal input_port_from_EX2MEM    : std_logic_vector(31 downto 0);
+
+    -- EX2/MEM -> MEM (control)
+    signal alu_op_from_EX2MEM        : std_logic_vector(2 downto 0);
+    signal new_sp_sel_from_EX2MEM    : std_logic;
+    signal sp_we_from_EX2MEM         : std_logic;
+    signal mem_addr_sel_from_EX2MEM  : std_logic_vector(2 downto 0);
+    signal mem_data_sel_from_EX2MEM  : std_logic_vector(1 downto 0);
+    signal mem_we_from_EX2MEM        : std_logic;
+    signal mem_r_from_EX2MEM         : std_logic;
+    signal reg_data_from_EX2MEM      : std_logic_vector(2 downto 0);
+    signal reg_we_from_EX2MEM        : std_logic;
+    signal ret_from_EX2MEM           : std_logic;
+    signal int_state_from_EX2MEM     : std_logic_vector(1 downto 0);
+    signal is_load_from_EX2MEM       : std_logic;
+    signal swap_state_from_EX2MEM    : std_logic_vector(1 downto 0);
+    signal out_enable_from_EX2MEM    : std_logic;
+    signal hlt_from_EX2MEM           : std_logic;
 
   begin
 
@@ -899,13 +1108,13 @@ architecture rtl of top_level is
       alu_result_out_ex1_ex2          => alu_result_from_EX1,
 
       -- Forwarding-mux data sources
-      --   EX1/EX2 feedback is now wired; EX2/MEM and MEM/WB are TODO until those registers exist.
+      --   EX1/EX2 and EX2/MEM feedback wired; MEM/WB is TODO until that register exists.
       alu_res_in_ex1_ex2              => alu_res_from_EX1EX2,
-      alu_res_in_ex2_mem              => (others => '0'),
+      alu_res_in_ex2_mem              => alu_res_from_EX2MEM,
       alu_res_in_mem_wb               => (others => '0'),
       mem_data_out_in_mem_wb          => (others => '0'),
       imm_in_ex1_ex2                  => imm_from_EX1EX2,
-      imm_in_ex2_mem                  => (others => '0'),
+      imm_in_ex2_mem                  => imm_from_EX2MEM,
       imm_in_mem_wb                   => (others => '0'),
 
       -- Forwarding-mux selects (TODO from Forwarding Unit; "000" = no forward)
@@ -996,10 +1205,167 @@ architecture rtl of top_level is
         HLT_out          => hlt_from_EX1EX2
       );
 
+    ------------------------------------------------------------------------------
+    -- EX2 stage
+    --   Computes the memory effective address (rsrc1|rsrc2 + sign-extended imm),
+    --   maintains the CCR/BCCR registers, and emits the branch-taken flag for
+    --   the Hazard Unit. predicted_T is consumed by the Hazard Unit, not here.
+    ------------------------------------------------------------------------------
+    u_EX2: EX2
+      port map (
+        clk => clk,
+        rst => rst,
 
+        -- Control passthroughs from EX1/EX2 -> EX2/MEM
+        HLT_in_ex1_ex2                      => hlt_from_EX1EX2,
+        HLT_out_ex2_mem                     => hlt_from_EX2,
 
+        out_enable_in_ex1_ex2               => out_enable_from_EX1EX2,
+        out_enable_out_ex2_mem              => out_enable_from_EX2,
 
-    
+        swap_state_in_ex1_ex2               => swap_state_from_EX1EX2,
+        swap_state_out_hazard_fwd_ex2_mem   => swap_state_from_EX2,
+
+        is_load_in_ex1_ex2                  => is_load_from_EX1EX2,
+        is_load_out_hazard_ex2_mem          => is_load_from_EX2,
+
+        INT_state_in_ex1_ex2                => int_state_from_EX1EX2,
+        INT_state_out_hazard_bccr_ex2_mem   => int_state_from_EX2,
+
+        ret_in_ex1_ex2                      => ret_from_EX1EX2,
+        ret_out_hazard_ex2_mem              => ret_from_EX2,
+
+        reg_WE_in_ex1_ex2                   => reg_we_from_EX1EX2,
+        reg_WE_out_fwd_ex2_mem              => reg_we_from_EX2,
+
+        reg_data_in_ex1_ex2                 => reg_data_from_EX1EX2,
+        reg_data_out_ex2_mem                => reg_data_from_EX2,
+
+        mem_R_in_ex1_ex2                    => mem_r_from_EX1EX2,
+        mem_R_out_hazard_ex2_mem            => mem_r_from_EX2,
+
+        mem_WE_in_ex1_ex2                   => mem_we_from_EX1EX2,
+        mem_WE_out_ex2_mem                  => mem_we_from_EX2,
+
+        mem_data_sel_in_ex1_ex2             => mem_data_sel_from_EX1EX2,
+        mem_data_sel_out_ex2_mem            => mem_data_sel_from_EX2,
+
+        mem_addr_sel_in_ex1_ex2             => mem_addr_sel_from_EX1EX2,
+        mem_addr_sel_out_ex2_mem            => mem_addr_sel_from_EX2,
+
+        add_sel_in_ex1_ex2                  => add_sel_from_EX1EX2,
+
+        SP_WE_in_ex1_ex2                    => sp_we_from_EX1EX2,
+        SP_WE_out_ex2_mem                   => sp_we_from_EX2,
+
+        newSP_sel_in_ex1_ex2                => new_sp_sel_from_EX1EX2,
+        newSP_sel_out_ex2_mem               => new_sp_sel_from_EX2,
+
+        branch_op_in_ex1_ex2                => branch_op_from_EX1EX2,
+        modify_fl_in_ex1_ex2                => modify_ccr_from_EX1EX2,
+        ccr_sel_in_ex1_ex2                  => ccr_sel_from_EX1EX2,
+
+        alu_op_in_ex1_ex2                   => alu_op_from_EX1EX2,
+        alu_op_out_fwd_ex2_mem              => alu_op_from_EX2,
+
+        pc_in_ex1_ex2                       => pc_from_EX1EX2,
+        pc_out_branch_ex2_mem               => pc_from_EX2,
+
+        HW_INT_ret_in_ex1_ex2               => hw_int_ret_from_EX1EX2,
+        HW_INT_ret_out_ex2_mem              => hw_int_ret_from_EX2,
+
+        -- Data signals
+        ccr_in_ex1_ex2                      => ccr_from_EX1EX2,
+
+        alu_result_in_ex1_ex2               => alu_res_from_EX1EX2,
+        alu_result_out_ex2_mem              => alu_result_from_EX2,
+
+        rsrc1_in_ex1_ex2                    => rsrc1_from_EX1EX2,
+        rsrc1_out_ex2_mem                   => rsrc1_from_EX2,
+
+        rsrc2_in_ex1_ex2                    => rsrc2_from_EX1EX2,
+
+        imm_in_ex1_ex2                      => imm_from_EX1EX2,
+        imm_out_ex2_mem                     => imm_from_EX2,
+
+        reg_dst_addr_in_ex1_ex2             => reg_dst_addr_from_EX1EX2,
+        reg_dst_addr_out_hazard_fwd_ex2_mem => reg_dst_addr_from_EX2,
+
+        input_port_in_ex1_ex2               => input_port_from_EX1EX2,
+        input_port_out_ex2_mem              => input_port_from_EX2,
+
+        -- EX2-generated outputs
+        add_result_out_ex2_mem              => add_result_from_EX2,
+        branch_decision_out_hazard          => branch_decision_from_EX2
+      );
+
+    ------------------------------------------------------------------------------
+    -- EX2/MEM pipeline register
+    --   Latches all of EX2's passthrough outputs plus the memory effective
+    --   address (add_result). The branch-decision flag is consumed combinationally
+    --   by the Hazard Unit and is NOT latched here.
+    ------------------------------------------------------------------------------
+    u_EX2MEM: EX2MEM
+      port map (
+        clk      => clk,
+        flush    => tb_flush, -- TEMP from TB; TODO from hazard
+        write_en => '1',      -- TODO from hazard
+
+        -- Data inputs (from EX2)
+        pc           => pc_from_EX2,
+        HW_INT_ret   => hw_int_ret_from_EX2,
+        alu_res      => alu_result_from_EX2,
+        add_result   => add_result_from_EX2,
+        rsrc1        => rsrc1_from_EX2,
+        imm          => imm_from_EX2,
+        reg_dst_addr => reg_dst_addr_from_EX2,
+        input_port   => input_port_from_EX2,
+
+        -- Control inputs (from EX2)
+        alu_op       => alu_op_from_EX2,
+        newSP_sel    => new_sp_sel_from_EX2,
+        SP_WE        => sp_we_from_EX2,
+        mem_addr_sel => mem_addr_sel_from_EX2,
+        mem_data_sel => mem_data_sel_from_EX2,
+        mem_WE       => mem_we_from_EX2,
+        mem_R        => mem_r_from_EX2,
+        reg_data     => reg_data_from_EX2,
+        reg_WE       => reg_we_from_EX2,
+        ret          => ret_from_EX2,
+        INT_state    => int_state_from_EX2,
+        is_load      => is_load_from_EX2,
+        swap_state   => swap_state_from_EX2,
+        out_enable   => out_enable_from_EX2,
+        HLT          => hlt_from_EX2,
+
+        -- Data outputs (to MEM; alu_res and imm also feed EX1's forwarding muxes)
+        pc_out           => pc_from_EX2MEM,
+        HW_INT_ret_out   => hw_int_ret_from_EX2MEM,
+        alu_res_out      => alu_res_from_EX2MEM,
+        add_result_out   => add_result_from_EX2MEM,
+        rsrc1_out        => rsrc1_from_EX2MEM,
+        imm_out          => imm_from_EX2MEM,
+        reg_dst_addr_out => reg_dst_addr_from_EX2MEM,
+        input_port_out   => input_port_from_EX2MEM,
+
+        -- Control outputs (to MEM)
+        alu_op_out       => alu_op_from_EX2MEM,
+        newSP_sel_out    => new_sp_sel_from_EX2MEM,
+        SP_WE_out        => sp_we_from_EX2MEM,
+        mem_addr_sel_out => mem_addr_sel_from_EX2MEM,
+        mem_data_sel_out => mem_data_sel_from_EX2MEM,
+        mem_WE_out       => mem_we_from_EX2MEM,
+        mem_R_out        => mem_r_from_EX2MEM,
+        reg_data_out     => reg_data_from_EX2MEM,
+        reg_WE_out       => reg_we_from_EX2MEM,
+        ret_out          => ret_from_EX2MEM,
+        INT_state_out    => int_state_from_EX2MEM,
+        is_load_out      => is_load_from_EX2MEM,
+        swap_state_out   => swap_state_from_EX2MEM,
+        out_enable_out   => out_enable_from_EX2MEM,
+        HLT_out          => hlt_from_EX2MEM
+      );
+
     ------------------------------------------------------------------------------
     -- Top-level outputs
     -- Tied off until WB and HLT logic are wired in.
