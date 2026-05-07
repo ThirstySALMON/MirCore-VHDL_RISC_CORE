@@ -24,10 +24,12 @@ add wave -group "IF/ID"     sim:/top_level_tb/uut/u_IFID/*
 add wave -group "Decode"    sim:/top_level_tb/uut/u_decode_stage/*
 add wave -group "ID/EX1"    sim:/top_level_tb/uut/u_IDEX1/*
 add wave -group "EX1"       sim:/top_level_tb/uut/u_EX1/*
-add wave -group "EX1/EX2"    sim:/top_level_tb/uut/u_EX1EX2/*
+add wave -group "EX1/EX2"   sim:/top_level_tb/uut/u_EX1EX2/*
+add wave -group "EX2"       sim:/top_level_tb/uut/u_EX2/*
+add wave -group "EX2/MEM"   sim:/top_level_tb/uut/u_EX2MEM/*
 add wave -group "Memory"    sim:/top_level_tb/uut/u_memory/*
 
 
-run 5 ms 
+run 5 ms
 
 puts "Simulation completed. Check transcript for test results."
