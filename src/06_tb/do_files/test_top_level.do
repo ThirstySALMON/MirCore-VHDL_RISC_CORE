@@ -13,7 +13,8 @@ vlib work
 # vcom -2008 src/05_top/top_level.vhd
 # vcom -2008 src/06_tb/component_tests/top_level_tb.vhd
 
-vsim work.top_level_tb
+vsim -voptargs=+acc work.top_level_tb
+
 
 # --- Wave layout: grouped by stage -------------------------------------------
 delete wave *
