@@ -27,6 +27,8 @@ add wave -group "EX1"       sim:/top_level_tb/uut/u_EX1/*
 add wave -group "EX1/EX2"   sim:/top_level_tb/uut/u_EX1EX2/*
 add wave -group "EX2"       sim:/top_level_tb/uut/u_EX2/*
 add wave -group "EX2/MEM"   sim:/top_level_tb/uut/u_EX2MEM/*
+add wave -group "MEM"       sim:/top_level_tb/uut/u_MEM/*
+add wave -group "MEM/WB"    sim:/top_level_tb/uut/u_MEMWB/*
 add wave -group "Memory"    sim:/top_level_tb/uut/u_memory/*
 
 

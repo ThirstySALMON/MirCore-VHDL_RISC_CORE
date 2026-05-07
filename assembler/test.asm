@@ -8,22 +8,25 @@
 
 START:
 
-    STD R1, 5(R2)
+   ldm r1 , 5
+
+   nop 
+   nop 
+   nop
+   nop
+   nop
 
 
-    LDD R2, 20(R3)
 
+   ldm r2 , 5
 
-    IADD R4 ,R5 , 10
-     
-    ; OUT.PORT = R3
-    OUT R3
+   nop 
+   nop 
+   nop
+   nop
+   nop
 
-    ; Test signed immediate: R4 = 0xFFFF
-    LDM R4, -1
-
-    ; Test unsigned immediate: R5 = 0xFFFF
-    LDM R5, 0xFFFF
+   add r3 , r1 , r2
 
     HLT
 

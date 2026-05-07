@@ -1,9 +1,9 @@
 --------------------------------------------------------------------------------
 -- top_level
 --   MirCore RISC pipeline top.
---   Currently wired: instruction memory, fetch, IF/ID, decode, ID/EX1.
---   Pending: EX1, EX2, MEM, WB stages, hazard unit, forwarding unit,
---            interrupt handler.
+--   Currently wired: instruction/data memory, fetch, IF/ID, decode, ID/EX1,
+--                    EX1, EX1/EX2, EX2, EX2/MEM, MEM, MEM/WB.
+--   Pending: WB stage, hazard unit, forwarding unit, interrupt handler.
 --------------------------------------------------------------------------------
 library ieee;
   use ieee.std_logic_1164.all;
@@ -575,6 +575,104 @@ architecture rtl of top_level is
     );
   end component;
 
+  component memory_stage is
+    port (
+      clk                : in  std_logic;
+      rst                : in  std_logic;
+
+      HLT                : in  std_logic;
+      out_enable         : in  std_logic;
+      swap_state         : in  std_logic_vector(1 downto 0);
+      is_load            : in  std_logic;
+      INT_state          : in  std_logic_vector(1 downto 0);
+      ret                : in  std_logic;
+      reg_WE             : in  std_logic;
+      reg_data           : in  std_logic_vector(2 downto 0);
+      mem_R              : in  std_logic;
+      mem_WE             : in  std_logic;
+      mem_data_sel       : in  std_logic_vector(1 downto 0);
+      mem_addr_sel       : in  std_logic_vector(2 downto 0);
+      SP_WE              : in  std_logic;
+      newSP_sel          : in  std_logic;
+      alu_op             : in  std_logic_vector(2 downto 0);
+      pc                 : in  std_logic_vector(9 downto 0);
+      HW_INT_ret         : in  std_logic_vector(9 downto 0);
+      alu_res            : in  std_logic_vector(31 downto 0);
+      add_result         : in  std_logic_vector(9 downto 0);
+      rsrc1              : in  std_logic_vector(31 downto 0);
+      imm                : in  std_logic_vector(15 downto 0);
+      reg_dst_addr       : in  std_logic_vector(2 downto 0);
+      input_port         : in  std_logic_vector(31 downto 0);
+
+      mem_data_out       : in  std_logic_vector(31 downto 0);
+
+      HLT_out            : out std_logic;
+      out_enable_out     : out std_logic;
+      is_load_out        : out std_logic;
+      SW_INTDone_out     : out std_logic_vector(1 downto 0);
+      ret_out            : out std_logic;
+      reg_WE_out         : out std_logic;
+      reg_data_out       : out std_logic_vector(2 downto 0);
+      alu_op_out         : out std_logic_vector(2 downto 0);
+      alu_res_out        : out std_logic_vector(31 downto 0);
+      rsrc1_out          : out std_logic_vector(31 downto 0);
+      imm_out            : out std_logic_vector(15 downto 0);
+      reg_dst_addr_out   : out std_logic_vector(2 downto 0);
+      input_port_out     : out std_logic_vector(31 downto 0);
+      mem_data_out_to_wb : out std_logic_vector(31 downto 0);
+
+      swap_state_out     : out std_logic_vector(1 downto 0);
+      mem_R_out          : out std_logic;
+      mem_WE_out         : out std_logic;
+      mem_addr           : out std_logic_vector(9 downto 0);
+      mem_write_data     : out std_logic_vector(31 downto 0)
+    );
+  end component;
+
+  component MEMWB is
+    port (
+      clk      : in  std_logic;
+      flush    : in  std_logic;
+      write_en : in  std_logic;
+
+      -- Data inputs
+      alu_res      : in  std_logic_vector(31 downto 0);
+      rsrc1        : in  std_logic_vector(31 downto 0);
+      mem_data_out : in  std_logic_vector(31 downto 0);
+      imm          : in  std_logic_vector(15 downto 0);
+      reg_dst_addr : in  std_logic_vector(2 downto 0);
+      input_port   : in  std_logic_vector(31 downto 0);
+
+      -- Control inputs
+      alu_op       : in  std_logic_vector(2 downto 0);
+      reg_data     : in  std_logic_vector(2 downto 0);
+      reg_WE       : in  std_logic;
+      ret          : in  std_logic;
+      SW_INTDone   : in  std_logic_vector(1 downto 0);
+      is_load      : in  std_logic;
+      out_enable   : in  std_logic;
+      HLT          : in  std_logic;
+
+      -- Data outputs
+      alu_res_out      : out std_logic_vector(31 downto 0);
+      rsrc1_out        : out std_logic_vector(31 downto 0);
+      mem_data_out_out : out std_logic_vector(31 downto 0);
+      imm_out          : out std_logic_vector(15 downto 0);
+      reg_dst_addr_out : out std_logic_vector(2 downto 0);
+      input_port_out   : out std_logic_vector(31 downto 0);
+
+      -- Control outputs
+      alu_op_out       : out std_logic_vector(2 downto 0);
+      reg_data_out     : out std_logic_vector(2 downto 0);
+      reg_WE_out       : out std_logic;
+      ret_out          : out std_logic;
+      SW_INTDone_out   : out std_logic_vector(1 downto 0);
+      is_load_out      : out std_logic;
+      out_enable_out   : out std_logic;
+      HLT_out          : out std_logic
+    );
+  end component;
+
     ------------------------------------------------------------------------------
     -- Internal signals
     ------------------------------------------------------------------------------
@@ -798,24 +896,77 @@ architecture rtl of top_level is
     signal out_enable_from_EX2MEM    : std_logic;
     signal hlt_from_EX2MEM           : std_logic;
 
+    -- MEM stage outputs
+    -- mem_addr_from_MEM and mem_we_from_MEM drive the unified data/instruction memory.
+    -- mem_data_out_to_wb_from_MEM is the read data path forwarded to MEM/WB.
+    signal hlt_from_MEM              : std_logic;
+    signal out_enable_from_MEM       : std_logic;
+    signal is_load_from_MEM          : std_logic;
+    signal sw_intdone_from_MEM       : std_logic_vector(1 downto 0);
+    signal ret_from_MEM              : std_logic;
+    signal reg_we_from_MEM           : std_logic;
+    signal reg_data_from_MEM         : std_logic_vector(2 downto 0);
+    signal alu_op_from_MEM           : std_logic_vector(2 downto 0);
+    signal alu_res_from_MEM          : std_logic_vector(31 downto 0);
+    signal rsrc1_from_MEM            : std_logic_vector(31 downto 0);
+    signal imm_from_MEM              : std_logic_vector(15 downto 0);
+    signal reg_dst_addr_from_MEM     : std_logic_vector(2 downto 0);
+    signal input_port_from_MEM       : std_logic_vector(31 downto 0);
+    signal mem_data_out_to_wb_from_MEM : std_logic_vector(31 downto 0);
+    signal swap_state_from_MEM       : std_logic_vector(1 downto 0);
+    signal mem_r_from_MEM            : std_logic;
+    signal mem_we_from_MEM           : std_logic;
+    signal mem_addr_from_MEM         : std_logic_vector(9 downto 0);
+    signal mem_write_data_from_MEM   : std_logic_vector(31 downto 0);
+
+    -- MEM/WB -> WB
+    -- alu_res_from_MEMWB, mem_data_out_from_MEMWB and imm_from_MEMWB also feed
+    -- EX1's forwarding muxes (mem_wb slot).
+    signal alu_res_from_MEMWB        : std_logic_vector(31 downto 0);
+    signal rsrc1_from_MEMWB          : std_logic_vector(31 downto 0);
+    signal mem_data_out_from_MEMWB   : std_logic_vector(31 downto 0);
+    signal imm_from_MEMWB            : std_logic_vector(15 downto 0);
+    signal reg_dst_addr_from_MEMWB   : std_logic_vector(2 downto 0);
+    signal input_port_from_MEMWB     : std_logic_vector(31 downto 0);
+    signal alu_op_from_MEMWB         : std_logic_vector(2 downto 0);
+    signal reg_data_from_MEMWB       : std_logic_vector(2 downto 0);
+    signal reg_we_from_MEMWB         : std_logic;
+    signal ret_from_MEMWB            : std_logic;
+    signal sw_intdone_from_MEMWB     : std_logic_vector(1 downto 0);
+    signal is_load_from_MEMWB        : std_logic;
+    signal out_enable_from_MEMWB     : std_logic;
+    signal hlt_from_MEMWB            : std_logic;
+
+
+    -- top_level signals 
+    signal hw_int_ret_final : std_logic_vector(9 downto 0);
+
   begin
 
+
+
+
+  with swap_state_from_EX1EX2 select hw_int_ret_final <= 
+      pc_from_EX1EX2 when "00" ,
+      std_logic_vector(unsigned(pc_from_EX1EX2 + 1)) when "10";
     ------------------------------------------------------------------------------
-    -- Instruction memory
-    -- During reset, force address 0 so M[0] (the reset vector) is on the bus.
-    -- This breaks the feedback loop in fetch's reset path.
-    -- Will become a 3-way mux once MEM/WB drives data accesses.
+    -- Unified instruction/data memory
+    --   - During reset: force address 0 so M[0] (reset vector) is on the bus.
+    --   - When MEM stage drives mem_R or mem_WE: route the MEM data address.
+    --   - Otherwise: route the fetch instruction address.
+    --   The data port is single-port, so loads collide with the next fetch.
+    --   This is acceptable until the hazard unit stalls fetch on data accesses.
     ------------------------------------------------------------------------------
-    memory_addr <= (others => '0') when rst = '1'
-    else
-    mem_addr_out_fetch;
+    memory_addr <= (others => '0')   when rst = '1'
+              else mem_addr_from_MEM when (mem_r_from_MEM = '1' or mem_we_from_MEM = '1')
+              else mem_addr_out_fetch;
 
     u_memory: memory
     port map (
       clk          => clk,
-      mem_write_en => '0',             -- TODO drive from MEM stage
+      mem_write_en => mem_we_from_MEM,
       mem_addr     => memory_addr,
-      mem_data_in  => (others => '0'), -- TODO drive from MEM stage
+      mem_data_in  => mem_write_data_from_MEM,
       mem_data_out => memory_data_out
     );
 
@@ -835,10 +986,10 @@ architecture rtl of top_level is
       pc_write_en              => '1',             -- TODO from hazard
       pc_src_sel               => (others => '0'), -- TODO from hazard
       corrected_addr_sel       => '0',             -- TODO from hazard
-      branch_target_addr       => (others => '0'), -- TODO from EX1/EX2
-      branch_fallthrough_addr  => (others => '0'), -- TODO from EX1/EX2
+      branch_target_addr       => imm_from_EX1EX2(9 downto 0 ),
+      branch_fallthrough_addr  => std_logic_vector(unsigned(pc_from_EX1EX2+1)),
       instruction_word         => memory_data_out,
-      mem_read_addr            => (others => '0'), -- TODO from MEM/WB
+      mem_read_addr            => mem_data_out_from_MEMWB, -- Return address
       input_port               => input_port
     );
 
@@ -879,18 +1030,18 @@ architecture rtl of top_level is
       rsrc1_sel       => '0',
       rdst_sel        => '0',
 
-      -- From MEM/WB write-back path (TODO)
-      reg_we          => '0',
-      reg_data_sel    => (others => '0'),
-      reg_wb_addr     => (others => '0'),
-      mem_data_out    => (others => '0'),
-      imm_wb          => (others => '0'),
-      alu_res_wb      => (others => '0'),
-      input_port_wb   => (others => '0'),
-      rsrc1_wb        => (others => '0'),
+      -- From MEM/WB write-back path
+      reg_we          => reg_we_from_MEMWB,
+      reg_data_sel    => reg_data_from_MEMWB,
+      reg_wb_addr     => reg_dst_addr_from_MEMWB,
+      mem_data_out    => mem_data_out_from_MEMWB,
+      imm_wb          => imm_from_MEMWB,
+      alu_res_wb      => alu_res_from_MEMWB,
+      input_port_wb   => input_port_from_MEMWB,
+      rsrc1_wb        => rsrc1_from_MEMWB,
 
       -- From EX1/EX2 (TODO)
-      hw_int_ret_ex1  => (others => '0'),
+      hw_int_ret_ex1  => hw_int_ret_final,
 
       -- To ID/EX1
       predicted_t_out => predicted_t_to_IDEX1,
@@ -1107,15 +1258,14 @@ architecture rtl of top_level is
       ccr_out_ex1_ex2                 => ccr_from_EX1,
       alu_result_out_ex1_ex2          => alu_result_from_EX1,
 
-      -- Forwarding-mux data sources
-      --   EX1/EX2 and EX2/MEM feedback wired; MEM/WB is TODO until that register exists.
+      -- Forwarding-mux data sources (all four pipeline-register taps wired)
       alu_res_in_ex1_ex2              => alu_res_from_EX1EX2,
       alu_res_in_ex2_mem              => alu_res_from_EX2MEM,
-      alu_res_in_mem_wb               => (others => '0'),
-      mem_data_out_in_mem_wb          => (others => '0'),
+      alu_res_in_mem_wb               => alu_res_from_MEMWB,
+      mem_data_out_in_mem_wb          => mem_data_out_from_MEMWB,
       imm_in_ex1_ex2                  => imm_from_EX1EX2,
       imm_in_ex2_mem                  => imm_from_EX2MEM,
-      imm_in_mem_wb                   => (others => '0'),
+      imm_in_mem_wb                   => imm_from_MEMWB,
 
       -- Forwarding-mux selects (TODO from Forwarding Unit; "000" = no forward)
       rsrc1_fwd_sel_in_fwd            => (others => '0'),
@@ -1364,6 +1514,119 @@ architecture rtl of top_level is
         swap_state_out   => swap_state_from_EX2MEM,
         out_enable_out   => out_enable_from_EX2MEM,
         HLT_out          => hlt_from_EX2MEM
+      );
+
+    ------------------------------------------------------------------------------
+    -- MEM stage
+    --   - SP register (decrements on push, increments on pop)
+    --   - mem_addr mux: add_result | SP | SP+1 | constants 1/2/3
+    --   - mem_write_data mux: rsrc1 | PC+1 (for CALL) | HW_INT_ret (for INT)
+    --   - Drives the unified memory's data port (mem_addr / mem_write_data /
+    --     mem_we / mem_r). Read data comes back combinationally as
+    --     memory_data_out and is passed straight through to MEM/WB.
+    ------------------------------------------------------------------------------
+    u_MEM: memory_stage
+      port map (
+        clk                => clk,
+        rst                => rst,
+
+        -- From EX2/MEM
+        HLT                => hlt_from_EX2MEM,
+        out_enable         => out_enable_from_EX2MEM,
+        swap_state         => swap_state_from_EX2MEM,
+        is_load            => is_load_from_EX2MEM,
+        INT_state          => int_state_from_EX2MEM,
+        ret                => ret_from_EX2MEM,
+        reg_WE             => reg_we_from_EX2MEM,
+        reg_data           => reg_data_from_EX2MEM,
+        mem_R              => mem_r_from_EX2MEM,
+        mem_WE             => mem_we_from_EX2MEM,
+        mem_data_sel       => mem_data_sel_from_EX2MEM,
+        mem_addr_sel       => mem_addr_sel_from_EX2MEM,
+        SP_WE              => sp_we_from_EX2MEM,
+        newSP_sel          => new_sp_sel_from_EX2MEM,
+        alu_op             => alu_op_from_EX2MEM,
+        pc                 => pc_from_EX2MEM,
+        HW_INT_ret         => hw_int_ret_from_EX2MEM,
+        alu_res            => alu_res_from_EX2MEM,
+        add_result         => add_result_from_EX2MEM,
+        rsrc1              => rsrc1_from_EX2MEM,
+        imm                => imm_from_EX2MEM,
+        reg_dst_addr       => reg_dst_addr_from_EX2MEM,
+        input_port         => input_port_from_EX2MEM,
+
+        -- From unified memory (read data)
+        mem_data_out       => memory_data_out,
+
+        -- To MEM/WB
+        HLT_out            => hlt_from_MEM,
+        out_enable_out     => out_enable_from_MEM,
+        is_load_out        => is_load_from_MEM,
+        SW_INTDone_out     => sw_intdone_from_MEM,
+        ret_out            => ret_from_MEM,
+        reg_WE_out         => reg_we_from_MEM,
+        reg_data_out       => reg_data_from_MEM,
+        alu_op_out         => alu_op_from_MEM,
+        alu_res_out        => alu_res_from_MEM,
+        rsrc1_out          => rsrc1_from_MEM,
+        imm_out            => imm_from_MEM,
+        reg_dst_addr_out   => reg_dst_addr_from_MEM,
+        input_port_out     => input_port_from_MEM,
+        mem_data_out_to_wb => mem_data_out_to_wb_from_MEM,
+
+        -- To memory (data port) and Hazard Unit
+        swap_state_out     => swap_state_from_MEM,
+        mem_R_out          => mem_r_from_MEM,
+        mem_WE_out         => mem_we_from_MEM,
+        mem_addr           => mem_addr_from_MEM,
+        mem_write_data     => mem_write_data_from_MEM
+      );
+
+    ------------------------------------------------------------------------------
+    -- MEM/WB pipeline register
+    --   Latches MEM stage outputs for the WB stage and forwarding feedback.
+    ------------------------------------------------------------------------------
+    u_MEMWB: MEMWB
+      port map (
+        clk      => clk,
+        flush    => tb_flush, -- TEMP from TB; TODO from hazard
+        write_en => '1',      -- TODO from hazard
+
+        -- Data inputs (from MEM)
+        alu_res      => alu_res_from_MEM,
+        rsrc1        => rsrc1_from_MEM,
+        mem_data_out => mem_data_out_to_wb_from_MEM,
+        imm          => imm_from_MEM,
+        reg_dst_addr => reg_dst_addr_from_MEM,
+        input_port   => input_port_from_MEM,
+
+        -- Control inputs (from MEM)
+        alu_op       => alu_op_from_MEM,
+        reg_data     => reg_data_from_MEM,
+        reg_WE       => reg_we_from_MEM,
+        ret          => ret_from_MEM,
+        SW_INTDone   => sw_intdone_from_MEM,
+        is_load      => is_load_from_MEM,
+        out_enable   => out_enable_from_MEM,
+        HLT          => hlt_from_MEM,
+
+        -- Data outputs (to WB / decode write-back / EX1 forwarding muxes)
+        alu_res_out      => alu_res_from_MEMWB,
+        rsrc1_out        => rsrc1_from_MEMWB,
+        mem_data_out_out => mem_data_out_from_MEMWB,
+        imm_out          => imm_from_MEMWB,
+        reg_dst_addr_out => reg_dst_addr_from_MEMWB,
+        input_port_out   => input_port_from_MEMWB,
+
+        -- Control outputs
+        alu_op_out       => alu_op_from_MEMWB,
+        reg_data_out     => reg_data_from_MEMWB,
+        reg_WE_out       => reg_we_from_MEMWB,
+        ret_out          => ret_from_MEMWB,
+        SW_INTDone_out   => sw_intdone_from_MEMWB,
+        is_load_out      => is_load_from_MEMWB,
+        out_enable_out   => out_enable_from_MEMWB,
+        HLT_out          => hlt_from_MEMWB
       );
 
     ------------------------------------------------------------------------------
