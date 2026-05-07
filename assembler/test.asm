@@ -8,14 +8,16 @@
 
 START:
     ; R1 = 5
-    LDM R1, 5
+    ;LDM R1, 5
 
     ; R2 = 10
-    LDM R2, 10
+    ;LDM R2, 10
 
     ; R3 = R1 + R2
     ADD R3, R1, R2
 
+    IADD R4 ,R5 , 10
+     
     ; OUT.PORT = R3
     OUT R3
 
