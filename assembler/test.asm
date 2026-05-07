@@ -7,45 +7,26 @@
 .vector int1 ISR1
 
 START:
-
    ldm r1 , 5
-
    nop 
    nop 
    nop
    nop
    nop
-
-
-
    ldm r2 , 5
-
    nop 
    nop 
    nop
    nop
    nop
-
-   add r3 , r1 , r2
-
+   iadd r3 , r1 , 10
    nop 
    nop 
+   nop
    nop
    nop
    nop
 
-   std r3 , 100(r3)
-    nop 
-   nop 
-   nop
-   nop
-   nop
-    ldd r4 , 100(r3)
-        nop 
-   nop 
-   nop
-   nop
-   nop
     HLT
 
 ISR0:
