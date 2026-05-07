@@ -727,7 +727,7 @@ architecture rtl of top_level is
     port map (
       clk              => clk,
       flush            => tb_flush, -- TEMP from TB; TODO from hazard
-      write_en         => '0',      -- TODO from hazard
+      write_en         => '1',      -- TODO from hazard
 
       -- Data inputs
       predicted_T      => predicted_t_to_IDEX1,
