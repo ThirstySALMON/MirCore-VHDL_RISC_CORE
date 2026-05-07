@@ -34,7 +34,7 @@ architecture rtl of forwarding_unit is
 
 begin
 
-  process (all)
+  process (rsrc1_addr, rsrc2_addr, swap_state, reg_WE_ex1_ex2, reg_dst_addr_ex1_ex2, reg_data_ex1_ex2, reg_WE_ex2_mem, reg_dst_addr_ex2_mem, reg_data_ex2_mem, reg_WE_mem_wb, reg_dst_addr_mem_wb, reg_data_mem_wb)
   begin
     -- default is rsrc
     operand1_sel <= (others => '0');
