@@ -40,7 +40,7 @@ begin
     operand1_sel <= (others => '0');
     operand2_sel <= (others => '0');
 
-    --OPERAND 1
+    -- OPERAND 1
     -- check ex1/ex2 first
     if ((reg_WE_ex1_ex2 = '1') and (reg_dst_addr_ex1_ex2 = rsrc1_addr) and (swap_state /= "01")) then
       if (reg_data_ex1_ex2 = "010") then
@@ -49,7 +49,7 @@ begin
         operand1_sel <= "001";
       end if;
 
-      --check ex2/mem
+      -- check ex2/mem
     elsif ((reg_WE_ex2_mem = '1') and (reg_dst_addr_ex2_mem = rsrc1_addr)) then
       if (reg_data_ex2_mem = "010") then
         operand1_sel <= "110";
@@ -82,7 +82,7 @@ begin
     elsif ((reg_WE_ex2_mem = '1') and (reg_dst_addr_ex2_mem = rsrc2_addr)) then
       if (reg_data_ex2_mem = "010") then
         operand2_sel <= "110";
-      elsif (reg_data_ex2_mem = "011"or reg_data_ex2_mem = "101") then
+      elsif (reg_data_ex2_mem = "011" or reg_data_ex2_mem = "101") then
         operand2_sel <= "010";
       end if;
 
