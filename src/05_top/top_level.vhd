@@ -678,8 +678,11 @@ architecture rtl of top_level is
     ------------------------------------------------------------------------------
 
     -- Instruction memory bus
-    signal memory_addr     : std_logic_vector(9 downto 0);
-    signal memory_data_out : std_logic_vector(31 downto 0);
+    -- Default initializers are critical: on `restart` the conditional address
+    -- mux can briefly see 'U' on the MEM-stage controls before the chain
+    -- settles. Defaulting to '0' makes the mux fall through to the fetch path.
+    signal memory_addr     : std_logic_vector(9 downto 0)  := (others => '0');
+    signal memory_data_out : std_logic_vector(31 downto 0) := (others => '0');
 
     -- Fetch -> IF/ID
     signal predict_fetch      : std_logic;
@@ -956,6 +959,7 @@ architecture rtl of top_level is
     --   - Otherwise: route the fetch instruction address.
     --   The data port is single-port, so loads collide with the next fetch.
     --   This is acceptable until the hazard unit stalls fetch on data accesses.
+    --
     ------------------------------------------------------------------------------
     memory_addr <= (others => '0')   when rst = '1'
               else mem_addr_from_MEM when (mem_r_from_MEM = '1' or mem_we_from_MEM = '1')
