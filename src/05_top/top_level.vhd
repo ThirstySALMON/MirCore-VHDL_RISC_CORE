@@ -940,6 +940,8 @@ architecture rtl of top_level is
     signal out_enable_from_MEMWB     : std_logic;
     signal hlt_from_MEMWB            : std_logic;
 
+    signal branch_fall_through_plus1 : std_logic_vector(9 downto 0);
+
 
     -- top_level signals 
     signal hw_int_ret_final : std_logic_vector(9 downto 0);
@@ -951,7 +953,11 @@ architecture rtl of top_level is
 
   with swap_state_from_EX1EX2 select hw_int_ret_final <= 
       pc_from_EX1EX2 when "00" ,
-      std_logic_vector(unsigned(pc_from_EX1EX2 + 1)) when "10";
+      std_logic_vector(unsigned(pc_from_EX1EX2) + 1) when "10",
+      (others =>'0') when others;
+      
+
+    branch_fall_through_plus1 <=  std_logic_vector(unsigned(pc_from_EX1EX2)+1);
     ------------------------------------------------------------------------------
     -- Unified instruction/data memory
     --   - During reset: force address 0 so M[0] (reset vector) is on the bus.
@@ -991,7 +997,7 @@ architecture rtl of top_level is
       pc_src_sel               => (others => '0'), -- TODO from hazard
       corrected_addr_sel       => '0',             -- TODO from hazard
       branch_target_addr       => imm_from_EX1EX2(9 downto 0 ),
-      branch_fallthrough_addr  => std_logic_vector(unsigned(pc_from_EX1EX2+1)),
+      branch_fallthrough_addr  =>branch_fall_through_plus1,
       instruction_word         => memory_data_out,
       mem_read_addr            => mem_data_out_from_MEMWB, -- Return address
       input_port               => input_port

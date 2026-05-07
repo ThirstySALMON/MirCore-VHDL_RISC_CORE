@@ -28,6 +28,24 @@ START:
 
    add r3 , r1 , r2
 
+   nop 
+   nop 
+   nop
+   nop
+   nop
+
+   std r3 , 100(r3)
+    nop 
+   nop 
+   nop
+   nop
+   nop
+    ldd r4 , 100(r3)
+        nop 
+   nop 
+   nop
+   nop
+   nop
     HLT
 
 ISR0:
