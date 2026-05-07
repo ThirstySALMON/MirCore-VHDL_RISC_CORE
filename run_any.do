@@ -1,24 +1,6 @@
-# ============================================================
-# GENERIC DO FILE RUNNER
-# Just change "target_do_file" and run this script
-# ============================================================
-
-# ============================================================
-# 🔧 CHANGE ONLY THIS LINE 👇
-# ============================================================
-set target_do_file "src/06_tb/do_files/test_predictor_2_bit.do"
-
-# ============================================================
-# Run selected .do file
-# ============================================================
-
-echo "========================================="
-echo "Running DO file:"
-echo $target_do_file
-echo "========================================="
-
-if {[file exists $target_do_file]} {
-    do $target_do_file
-} else {
-    echo "ERROR: File not found -> $target_do_file"
-}
+examine sim:/top_level_tb/rst
+examine sim:/top_level_tb/uut/u_fetch_stage/pc_reg
+examine -radix hex sim:/top_level_tb/uut/memory_addr
+examine -radix hex sim:/top_level_tb/uut/memory_data_out
+examine -radix hex sim:/top_level_tb/uut/u_memory/mem(0)
+examine -radix hex sim:/top_level_tb/uut/u_fetch_stage/instruction_word
