@@ -3,11 +3,11 @@ library ieee;
 
 entity interrupt_handler is
   port (
-    clk          : in  std_logic;
-    rst          : in  std_logic;
-    hw_interrupt : in  std_logic;
-    interrupt_done     : in  std_logic;
-    interrupt_request  : out std_logic
+    clk               : in  std_logic;
+    rst               : in  std_logic;
+    hw_interrupt      : in  std_logic;
+    interrupt_done    : in  std_logic;
+    interrupt_request : out std_logic
   );
 end entity;
 
