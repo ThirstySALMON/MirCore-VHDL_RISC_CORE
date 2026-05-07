@@ -12,20 +12,16 @@ entity forwarding_unit is
     swap_state           : in  std_logic_vector(1 downto 0);
     reg_WE_ex1_ex2       : in  std_logic;
     reg_dst_addr_ex1_ex2 : in  std_logic_vector(2 downto 0);
-    alu_op_ex1_ex2       : in  std_logic_vector(2 downto 0);
     reg_data_ex1_ex2     : in  std_logic_vector(2 downto 0);
 
     -- inputs from ex2/mem
     reg_data_ex2_mem     : in  std_logic_vector(2 downto 0);
     reg_dst_addr_ex2_mem : in  std_logic_vector(2 downto 0);
-    alu_op_ex2_mem       : in  std_logic_vector(2 downto 0);
     reg_WE_ex2_mem       : in  std_logic;
 
     -- inputs from mem/wb
-    is_load              : in  std_logic;
     reg_WE_mem_wb        : in  std_logic;
     reg_dst_addr_mem_wb  : in  std_logic_vector(2 downto 0);
-    alu_op_mem_wb        : in  std_logic_vector(2 downto 0);
     reg_data_mem_wb      : in  std_logic_vector(2 downto 0);
 
     -- outputs to ex1
@@ -46,10 +42,10 @@ begin
 
     --OPERAND 1
     -- check ex1/ex2 first
-    if ((reg_WE_ex1_ex2 = '1') and (reg_dst_addr_ex1_ex2 = rsrc1_addr)) then
+    if ((reg_WE_ex1_ex2 = '1') and (reg_dst_addr_ex1_ex2 = rsrc1_addr) and (swap_state /= "01")) then
       if (reg_data_ex1_ex2 = "010") then
         operand1_sel <= "101";
-      elsif (reg_data_ex1_ex2 = "011") then
+      elsif (reg_data_ex1_ex2 = "011" or reg_data_ex1_ex2 = "101") then
         operand1_sel <= "001";
       end if;
 
@@ -57,7 +53,7 @@ begin
     elsif ((reg_WE_ex2_mem = '1') and (reg_dst_addr_ex2_mem = rsrc1_addr)) then
       if (reg_data_ex2_mem = "010") then
         operand1_sel <= "110";
-      elsif (reg_data_ex2_mem = "011") then
+      elsif (reg_data_ex2_mem = "011" or reg_data_ex2_mem = "101") then
         operand1_sel <= "010";
       end if;
 
@@ -67,18 +63,18 @@ begin
         operand1_sel <= "100";
       elsif (reg_data_mem_wb = "010") then
         operand1_sel <= "111";
-      elsif (reg_data_mem_wb = "011") then
+      elsif (reg_data_mem_wb = "011" or reg_data_mem_wb = "101") then
         operand1_sel <= "011";
       end if;
 
     end if;
 
-        --OPERAND 2
+    --OPERAND 2
     -- check ex1/ex2 first
-    if ((reg_WE_ex1_ex2 = '1') and (reg_dst_addr_ex1_ex2 = rsrc2_addr)) then
+    if ((reg_WE_ex1_ex2 = '1') and (reg_dst_addr_ex1_ex2 = rsrc2_addr) and (swap_state /= "01")) then
       if (reg_data_ex1_ex2 = "010") then
         operand2_sel <= "101";
-      elsif (reg_data_ex1_ex2 = "011") then
+      elsif (reg_data_ex1_ex2 = "011" or reg_data_ex1_ex2 = "101") then
         operand2_sel <= "001";
       end if;
 
@@ -86,7 +82,7 @@ begin
     elsif ((reg_WE_ex2_mem = '1') and (reg_dst_addr_ex2_mem = rsrc2_addr)) then
       if (reg_data_ex2_mem = "010") then
         operand2_sel <= "110";
-      elsif (reg_data_ex2_mem = "011") then
+      elsif (reg_data_ex2_mem = "011"or reg_data_ex2_mem = "101") then
         operand2_sel <= "010";
       end if;
 
@@ -96,7 +92,7 @@ begin
         operand2_sel <= "100";
       elsif (reg_data_mem_wb = "010") then
         operand2_sel <= "111";
-      elsif (reg_data_mem_wb = "011") then 
+      elsif (reg_data_mem_wb = "011" or reg_data_mem_wb = "101") then
         operand2_sel <= "011";
       end if;
 
